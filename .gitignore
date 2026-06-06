@@ -10,3 +10,9 @@ reports/events/
 .env
 .env.*
 !.env.example
+.idea/
+.qodo/
+!.claude/
+!.codex/
+!.agents/
+!skills/
