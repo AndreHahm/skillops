@@ -1,0 +1,15 @@
+name: Skill request
+description: Propose a new managed skill.
+body:
+  - type: input
+    id: skill_id
+    attributes:
+      label: Skill ID
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Purpose
+    validations:
+      required: true

@@ -1,0 +1,22 @@
+[project]
+name = "skillops-cli"
+version = "0.1.0"
+description = "Command-line interface for SkillOps."
+requires-python = ">=3.13"
+license = { text = "MIT" }
+dependencies = [
+  "skillops-core",
+  "typer>=0.12",
+  "rich>=13.0",
+  "pyyaml>=6.0"
+]
+
+[project.scripts]
+skillops = "skillops_cli.main:app"
+
+[tool.uv.sources]
+skillops-core = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

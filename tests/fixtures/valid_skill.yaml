@@ -1,0 +1,32 @@
+id: valid-skill
+name: Valid Skill
+version: 0.1.0
+status: candidate
+risk_tier: low
+description: A valid fixture skill.
+owner:
+  name: platform
+  contact: platform@example.com
+type:
+  category: test
+  execution: instruction-only
+compatibility:
+  agents:
+    - codex
+  environments:
+    - ubuntu-24.04
+dependencies:
+  skills: []
+  tools: []
+  mcp_servers: []
+allowed_tools:
+  shell: read-only
+  filesystem: read-write
+evals:
+  suite_id: null
+  status: not-configured
+provenance:
+  source: internal
+  license: MIT
+paths:
+  skill_file: SKILL.md

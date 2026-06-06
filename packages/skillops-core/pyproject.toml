@@ -1,0 +1,15 @@
+[project]
+name = "skillops-core"
+version = "0.1.0"
+description = "Core validation and health models for SkillOps."
+requires-python = ">=3.13"
+license = { text = "MIT" }
+dependencies = [
+  "pydantic>=2.0",
+  "pyyaml>=6.0",
+  "jsonschema>=4.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

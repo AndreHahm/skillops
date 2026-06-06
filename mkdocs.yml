@@ -1,0 +1,18 @@
+site_name: SkillOps
+site_description: Open-source SkillOps control plane for managed agent skill repositories.
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Architecture:
+      - Overview: architecture/overview.md
+  - Governance:
+      - Skill Lifecycle: governance/skill-lifecycle.md
+      - Risk Tiers: governance/risk-tiers.md
+      - Ownership: governance/ownership.md
+  - Skill Authoring:
+      - Skill Manifest: skill-authoring/skill-manifest.md
+      - Skill Testing: skill-authoring/skill-testing.md
+      - Skill Maintenance: skill-authoring/skill-maintenance.md
+  - Roadmap:
+      - Phase 1 Foundation: roadmap/phase-1-foundation.md

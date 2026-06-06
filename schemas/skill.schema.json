@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SkillOps Skill Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "version",
+    "status",
+    "risk_tier",
+    "description",
+    "owner",
+    "type",
+    "compatibility",
+    "dependencies",
+    "allowed_tools",
+    "evals",
+    "provenance",
+    "paths"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "candidate",
+        "reviewed",
+        "stable",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "risk_tier": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "restricted"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "contact"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contact": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "execution"
+      ],
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "execution": {
+          "enum": [
+            "instruction-only",
+            "script-backed",
+            "tool-mediated",
+            "mcp-enhanced",
+            "subagent-spawning"
+          ]
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agents",
+        "environments"
+      ],
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "environments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skills",
+        "tools",
+        "mcp_servers"
+      ],
+      "properties": {
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mcp_servers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "allowed_tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shell": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "filesystem": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "network": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "other": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite_id",
+        "status"
+      ],
+      "properties": {
+        "suite_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "license"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill_file"
+      ],
+      "properties": {
+        "skill_file": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
