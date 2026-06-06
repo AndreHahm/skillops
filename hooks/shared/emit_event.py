@@ -59,6 +59,7 @@ def main() -> int:
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("a", encoding="utf-8") as file:
         file.write(json.dumps(event, sort_keys=True) + "\n")
+    return 0
 
 
 if __name__ == "__main__":

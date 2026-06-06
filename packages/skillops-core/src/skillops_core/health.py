@@ -9,6 +9,7 @@ from skillops_core.models import (
     HealthReport,
     HealthSkillReport,
     Registry,
+    RegistrySkillEntry,
     SkillManifest,
     ValidationReport,
 )
@@ -76,6 +77,7 @@ def calculate_skill_health(
     )
 
 
+# noinspection PyBroadException
 def generate_health_report(repo_root: Path) -> HealthReport:
     repo_root = repo_root.resolve()
     validation_report = validate_registry(repo_root)
@@ -88,6 +90,7 @@ def generate_health_report(repo_root: Path) -> HealthReport:
         except Exception:  # noqa: BLE001 - validation report carries the specific failure.
             registry = None
     if registry is not None:
+        entry: RegistrySkillEntry
         for entry in registry.skills:
             try:
                 manifest = load_skill_manifest(repo_root / entry.path)

@@ -53,7 +53,7 @@ class StrictModel(BaseModel):
     @classmethod
     def model_validate(cls, obj: Any, **kwargs: Any) -> Self:
         try:
-            return super().model_validate(obj, **kwargs)
+            return super().model_validate(obj, **kwargs)  # type: ignore[return-value]
         except pydantic.ValidationError as exc:
             raise ModelValidationError(str(exc)) from exc
 
@@ -150,7 +150,7 @@ class SkillManifest(StrictModel):
     @model_validator(mode="after")
     def _validate(self) -> SkillManifest:
         if not re.match(r"^[a-z0-9][a-z0-9-]*[a-z0-9]$", self.id):
-            raise ValueError("skill id must be lowercase kebab-case")
+            raise ValueError("skill id must be lowercase kebab-case with at least 2 characters")
         for name in ["name", "version", "description"]:
             if not getattr(self, name):
                 raise ValueError(f"{name} is required")

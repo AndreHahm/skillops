@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from skillops_core.models import ModelValidationError, Registry, SkillManifest, ValidationReport
+
+_REGISTRY_PATH = "registry/skills.yaml"
 
 try:
     import yaml
@@ -96,11 +98,14 @@ def _simple_yaml_load(text: str) -> dict[str, Any]:
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
-    text = path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8")  # OSError propagates to caller
     if yaml is not None:
-        data = yaml.safe_load(text)
+        try:
+            data = yaml.safe_load(text)
+        except yaml.YAMLError as exc:
+            raise ValueError(f"YAML parse error: {exc}") from exc
     else:
-        data = _simple_yaml_load(text)
+        data = _simple_yaml_load(text)  # ValueError propagates to caller
     if not isinstance(data, dict):
         raise ValueError(f"YAML document must be a mapping: {path}")
     return data
@@ -122,7 +127,10 @@ def validate_skill_manifest(path: Path, repo_root: Path) -> ValidationReport:
         return report
     try:
         manifest_data = load_yaml(path)
-    except (OSError, ValueError, Exception) as exc:
+    except OSError as exc:
+        report.add("error", "io-error", f"Could not read skill manifest: {exc}", rel_path)
+        return report
+    except ValueError as exc:
         report.add("error", "invalid-skill-yaml", f"Invalid skill YAML: {exc}", rel_path)
         return report
 
@@ -134,6 +142,7 @@ def validate_skill_manifest(path: Path, repo_root: Path) -> ValidationReport:
         ("evals", "missing-evals"),
     ]:
         if key not in manifest_data or manifest_data[key] in (None, ""):
+            level: Literal["error", "warning"]
             level = "error" if key in {"owner", "risk_tier"} else "warning"
             report.add(level, code, f"Required field '{key}' is missing.", rel_path)
 
@@ -189,19 +198,17 @@ def validate_registry(repo_root: Path) -> ValidationReport:
         report.add(
             "error",
             "missing-registry-file",
-            "registry/skills.yaml does not exist.",
-            "registry/skills.yaml",
+            f"{_REGISTRY_PATH} does not exist.",
+            _REGISTRY_PATH,
         )
         return report
     try:
         registry_data = load_yaml(registry_path)
-    except (OSError, ValueError, Exception) as exc:  # noqa: BLE001 - report any parse failure
-        report.add(
-            "error",
-            "invalid-registry-yaml",
-            f"Invalid registry YAML: {exc}",
-            "registry/skills.yaml",
-        )
+    except OSError as exc:
+        report.add("error", "io-error", f"Could not read registry: {exc}", _REGISTRY_PATH)
+        return report
+    except ValueError as exc:
+        report.add("error", "invalid-registry-yaml", f"Invalid registry YAML: {exc}", _REGISTRY_PATH)
         return report
 
     if "version" not in registry_data:
@@ -209,7 +216,7 @@ def validate_registry(repo_root: Path) -> ValidationReport:
             "error",
             "missing-registry-version",
             "Registry version is missing.",
-            "registry/skills.yaml",
+            _REGISTRY_PATH,
         )
 
     raw_entries = registry_data.get("skills", [])
@@ -223,7 +230,7 @@ def validate_registry(repo_root: Path) -> ValidationReport:
                 "error",
                 "duplicate-skill-id",
                 f"Duplicate skill id: {skill_id}",
-                "registry/skills.yaml",
+                _REGISTRY_PATH,
                 skill_id,
             )
         elif isinstance(skill_id, str):
@@ -232,7 +239,7 @@ def validate_registry(repo_root: Path) -> ValidationReport:
     try:
         registry = Registry.model_validate(registry_data)
     except ModelValidationError as exc:
-        report.add("error", "invalid-registry-yaml", str(exc), "registry/skills.yaml")
+        report.add("error", "invalid-registry-yaml", str(exc), _REGISTRY_PATH)
         return report
 
     for entry in registry.skills:
@@ -250,7 +257,7 @@ def validate_registry(repo_root: Path) -> ValidationReport:
         report.findings.extend(skill_report.findings)
         try:
             manifest = load_skill_manifest(manifest_path)
-        except (ModelValidationError, OSError, ValueError, Exception):  # noqa: BLE001,S112
+        except (OSError, ValueError, ModelValidationError):
             # Validation findings already captured; skip ID mismatch check
             continue
         if manifest.id != entry.id:
