@@ -85,7 +85,7 @@ def list_skills(repo_root: Annotated[Path | None, typer.Option("--repo-root")] =
         registry = load_registry(root / "registry" / "skills.yaml")
     except Exception as exc:
         console.print(f"[red]Failed to load registry:[/] {exc}")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from exc
     table = Table(title="Registered Skills")
     for column in ["id", "name", "version", "status", "risk_tier", "owner", "path"]:
         table.add_column(column)
@@ -94,7 +94,7 @@ def list_skills(repo_root: Annotated[Path | None, typer.Option("--repo-root")] =
             manifest = load_skill_manifest(root / entry.path)
         except Exception as exc:
             console.print(f"[red]Failed to load skill manifest for {entry.id}:[/] {exc}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from exc
         table.add_row(
             manifest.id,
             manifest.name,
@@ -117,7 +117,7 @@ def inspect(
         registry = load_registry(root / "registry" / "skills.yaml")
     except Exception as exc:
         console.print(f"[red]Failed to load registry:[/] {exc}")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from exc
     entry = next((item for item in registry.skills if item.id == skill_id), None)
     if entry is None:
         console.print(f"[red]Skill not found:[/] {skill_id}")
@@ -126,7 +126,7 @@ def inspect(
         manifest = load_skill_manifest(root / entry.path)
     except Exception as exc:
         console.print(f"[red]Failed to load skill manifest for {skill_id}:[/] {exc}")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from exc
     report = validate_registry(root)
     console.print(Panel(manifest.description, title=f"{manifest.name} ({manifest.id})"))
     table = Table(title="Manifest")

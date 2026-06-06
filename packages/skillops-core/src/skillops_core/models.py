@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from dataclasses import MISSING, dataclass, field, fields, is_dataclass
+import re
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any, Literal, Self, get_args, get_origin, get_type_hints
+from typing import Any, Literal, Self
+
+import pydantic
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class ModelValidationError(ValueError):
@@ -42,162 +45,92 @@ class FindingLevel(StrEnum):
     info = "info"
 
 
-class StrictModel:
-    """Small validation base with Pydantic-like methods used by Phase 1."""
+class StrictModel(BaseModel):
+    """Pydantic BaseModel base; re-raises ValidationError as ModelValidationError."""
+
+    model_config = ConfigDict(extra="forbid")
 
     @classmethod
-    def model_validate(cls, data: dict[str, Any]) -> Self:
-        if not isinstance(data, dict):
-            raise ModelValidationError(f"{cls.__name__} expects a mapping")
-        allowed = {item.name for item in fields(cls)}
-        extra = set(data) - allowed
-        if extra:
-            raise ModelValidationError(f"Unexpected fields for {cls.__name__}: {sorted(extra)}")
-
-        hints = get_type_hints(cls)
-
-        kwargs: dict[str, Any] = {}
-        for item in fields(cls):
-            if item.name in data:
-                value = data[item.name]
-            elif item.default is not MISSING:
-                value = item.default
-            elif item.default_factory is not MISSING:
-                value = item.default_factory()  # type: ignore[misc]
-            else:
-                raise ModelValidationError(f"Missing required field: {item.name}")
-            kwargs[item.name] = _coerce(value, hints.get(item.name, item.type), item.name)
-        obj = cls(**kwargs)
-        validate = getattr(obj, "_validate", None)
-        if validate:
-            validate()
-        return obj
-
-    def model_dump(self, mode: str | None = None, exclude_none: bool = False) -> dict[str, Any]:
-        return {
-            item.name: _dump(getattr(self, item.name), mode, exclude_none)
-            for item in fields(type(self))
-            if not (exclude_none and getattr(self, item.name) is None)
-        }
-
-
-def _coerce(value: Any, typ: Any, name: str) -> Any:
-    origin = get_origin(typ)
-    args = get_args(typ)
-    if isinstance(typ, str):
-        # Future annotations are strings in Python 3.13+; validate in _validate methods.
-        return value
-    if origin is list:
-        if not isinstance(value, list):
-            raise ModelValidationError(f"{name} must be a list")
-        return [_coerce(item, args[0], name) for item in value]
-    if origin is dict:
-        if not isinstance(value, dict):
-            raise ModelValidationError(f"{name} must be a mapping")
-        return value
-    if origin in {Literal, type(Literal)}:
-        if value not in args:
-            raise ModelValidationError(f"{name} has invalid value: {value}")
-        return value
-    if origin is not None and type(None) in args:
-        if value is None:
-            return None
-        non_none = next(arg for arg in args if arg is not type(None))
-        return _coerce(value, non_none, name)
-    if isinstance(typ, type) and issubclass(typ, StrEnum):
+    def model_validate(cls, obj: Any, **kwargs: Any) -> Self:
         try:
-            return typ(value)
-        except ValueError as exc:
-            raise ModelValidationError(f"{name} has invalid value: {value}") from exc
-    if isinstance(typ, type) and is_dataclass(typ) and issubclass(typ, StrictModel):
-        return typ.model_validate(value)
-    return value
+            return super().model_validate(obj, **kwargs)
+        except pydantic.ValidationError as exc:
+            raise ModelValidationError(str(exc)) from exc
 
 
-def _dump(value: Any, mode: str | None, exclude_none: bool) -> Any:
-    if isinstance(value, StrEnum):
-        return str(value)
-    if isinstance(value, datetime):
-        return value.isoformat() if mode == "json" else value
-    if isinstance(value, StrictModel):
-        return value.model_dump(mode=mode, exclude_none=exclude_none)
-    if isinstance(value, list):
-        return [_dump(item, mode, exclude_none) for item in value]
-    return value
-
-
-@dataclass
 class SkillOwner(StrictModel):
     name: str
     contact: str
 
-    def _validate(self) -> None:
+    @model_validator(mode="after")
+    def _validate(self) -> SkillOwner:
         if not self.name or not self.contact:
-            raise ModelValidationError("owner name and contact are required")
+            raise ValueError("owner name and contact are required")
+        return self
 
 
-@dataclass
 class SkillType(StrictModel):
     category: str
     execution: ExecutionType
 
-    def _validate(self) -> None:
+    @model_validator(mode="after")
+    def _validate(self) -> SkillType:
         if not self.category:
-            raise ModelValidationError("type.category is required")
+            raise ValueError("type.category is required")
+        return self
 
 
-@dataclass
 class SkillCompatibility(StrictModel):
-    agents: list[str] = field(default_factory=list)
-    environments: list[str] = field(default_factory=list)
+    agents: list[str] = Field(default_factory=list)
+    environments: list[str] = Field(default_factory=list)
 
 
-@dataclass
 class SkillDependencies(StrictModel):
-    skills: list[str] = field(default_factory=list)
-    tools: list[str] = field(default_factory=list)
-    mcp_servers: list[str] = field(default_factory=list)
+    skills: list[str] = Field(default_factory=list)
+    tools: list[str] = Field(default_factory=list)
+    mcp_servers: list[str] = Field(default_factory=list)
 
 
-@dataclass
 class SkillAllowedTools(StrictModel):
     shell: str | None = None
     filesystem: str | None = None
     network: str | None = None
-    other: list[str] = field(default_factory=list)
+    other: list[str] = Field(default_factory=list)
 
 
-@dataclass
 class SkillEvals(StrictModel):
     suite_id: str | None = None
     status: str = "not-configured"
 
-    def _validate(self) -> None:
+    @model_validator(mode="after")
+    def _validate(self) -> SkillEvals:
         if not self.status:
-            raise ModelValidationError("evals.status is required")
+            raise ValueError("evals.status is required")
+        return self
 
 
-@dataclass
 class SkillProvenance(StrictModel):
     source: str
     license: str
     url: str | None = None
 
-    def _validate(self) -> None:
+    @model_validator(mode="after")
+    def _validate(self) -> SkillProvenance:
         if not self.source or not self.license:
-            raise ModelValidationError("provenance source and license are required")
+            raise ValueError("provenance source and license are required")
+        return self
 
 
-@dataclass
 class SkillPaths(StrictModel):
     skill_file: str = "SKILL.md"
 
-    def _validate(self) -> None:
+    @model_validator(mode="after")
+    def _validate(self) -> SkillPaths:
         if not self.skill_file:
-            raise ModelValidationError("paths.skill_file is required")
+            raise ValueError("paths.skill_file is required")
+        return self
 
 
-@dataclass
 class SkillManifest(StrictModel):
     id: str
     name: str
@@ -214,65 +147,48 @@ class SkillManifest(StrictModel):
     provenance: SkillProvenance
     paths: SkillPaths
 
-    def _validate(self) -> None:
-        import re
-
+    @model_validator(mode="after")
+    def _validate(self) -> SkillManifest:
         if not re.match(r"^[a-z0-9][a-z0-9-]*[a-z0-9]$", self.id):
-            raise ModelValidationError("skill id must be lowercase kebab-case")
+            raise ValueError("skill id must be lowercase kebab-case")
         for name in ["name", "version", "description"]:
             if not getattr(self, name):
-                raise ModelValidationError(f"{name} is required")
-        self.status = SkillStatus(self.status)
-        self.risk_tier = RiskTier(self.risk_tier)
-        if isinstance(self.owner, dict):
-            self.owner = SkillOwner.model_validate(self.owner)  # type: ignore[arg-type, ty:invalid-argument-type]
-        if isinstance(self.type, dict):
-            self.type = SkillType.model_validate(self.type)  # type: ignore[arg-type, ty:invalid-argument-type]
-        if isinstance(self.compatibility, dict):
-            self.compatibility = SkillCompatibility.model_validate(self.compatibility)  # type: ignore[arg-type, ty:invalid-argument-type]
-        if isinstance(self.dependencies, dict):
-            self.dependencies = SkillDependencies.model_validate(self.dependencies)  # type: ignore[arg-type, ty:invalid-argument-type]
-        if isinstance(self.allowed_tools, dict):
-            self.allowed_tools = SkillAllowedTools.model_validate(self.allowed_tools)  # type: ignore[arg-type, ty:invalid-argument-type]
-        if isinstance(self.evals, dict):
-            self.evals = SkillEvals.model_validate(self.evals)  # type: ignore[arg-type, ty:invalid-argument-type]
-        if isinstance(self.provenance, dict):
-            self.provenance = SkillProvenance.model_validate(self.provenance)  # type: ignore[arg-type, ty:invalid-argument-type]
-        if isinstance(self.paths, dict):
-            self.paths = SkillPaths.model_validate(self.paths)  # type: ignore[arg-type, ty:invalid-argument-type]
+                raise ValueError(f"{name} is required")
+        return self
 
 
-@dataclass
 class RegistrySkillEntry(StrictModel):
     id: str
     path: str
 
-    def _validate(self) -> None:
+    @model_validator(mode="after")
+    def _validate(self) -> RegistrySkillEntry:
         if not self.id or not self.path:
-            raise ModelValidationError("registry skill id and path are required")
+            raise ValueError("registry skill id and path are required")
+        return self
 
 
-@dataclass
 class Registry(StrictModel):
     version: int
-    skills: list[RegistrySkillEntry] = field(default_factory=list)
+    skills: list[RegistrySkillEntry] = Field(default_factory=list)
 
-    def _validate(self) -> None:
+    @field_validator("version", mode="before")
+    @classmethod
+    def _coerce_version(cls, v: Any) -> int:
         try:
-            self.version = int(self.version)
+            return int(v)
         except (ValueError, TypeError) as exc:
-            raise ModelValidationError(f"registry version must be an integer: {self.version}")
+            raise ValueError(f"registry version must be an integer: {v}") from exc
+
+    @model_validator(mode="after")
+    def _validate(self) -> Registry:
         if self.version < 1:
-            raise ModelValidationError("registry version must be >= 1")
-        self.skills = [
-            RegistrySkillEntry.model_validate(item) if isinstance(item, dict) else item  # type: ignore[arg-type, ty:invalid-argument-type]
-            for item in self.skills
-        ]
+            raise ValueError("registry version must be >= 1")
         if not self.skills:
-            raise ModelValidationError("registry must contain at least one skill")
+            raise ValueError("registry must contain at least one skill")
+        return self
 
 
-@dataclass
 class ValidationFinding(StrictModel):
     level: FindingLevel
     code: str
@@ -280,13 +196,9 @@ class ValidationFinding(StrictModel):
     path: str | None = None
     skill_id: str | None = None
 
-    def _validate(self) -> None:
-        self.level = FindingLevel(self.level)
 
-
-@dataclass
 class ValidationReport(StrictModel):
-    findings: list[ValidationFinding] = field(default_factory=list)
+    findings: list[ValidationFinding] = Field(default_factory=list)
 
     @property
     def error_count(self) -> int:
@@ -312,13 +224,20 @@ class ValidationReport(StrictModel):
         path: str | None = None,
         skill_id: str | None = None,
     ) -> None:
-        self.findings.append(ValidationFinding(FindingLevel(level), code, message, path, skill_id))
+        self.findings.append(
+            ValidationFinding(
+                level=FindingLevel(level),
+                code=code,
+                message=message,
+                path=path,
+                skill_id=skill_id,
+            )
+        )
 
     def findings_for_skill(self, skill_id: str) -> list[ValidationFinding]:
         return [finding for finding in self.findings if finding.skill_id == skill_id]
 
 
-@dataclass
 class HealthSkillReport(StrictModel):
     id: str
     name: str
@@ -327,17 +246,16 @@ class HealthSkillReport(StrictModel):
     risk_tier: str
     owner: str
     score: int
-    findings: list[ValidationFinding] = field(default_factory=list)
-    recommendations: list[str] = field(default_factory=list)
+    findings: list[ValidationFinding] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
 
 
-@dataclass
 class HealthReport(StrictModel):
     overall_score: float
     validation: ValidationReport
-    generated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     registry_version: int | None = None
-    skills: list[HealthSkillReport] = field(default_factory=list)
+    skills: list[HealthSkillReport] = Field(default_factory=list)
 
     def to_jsonable(self) -> dict[str, Any]:
         return self.model_dump(mode="json")
