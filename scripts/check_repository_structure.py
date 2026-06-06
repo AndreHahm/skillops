@@ -16,7 +16,8 @@ REQUIRED = [
     "hooks/shared/emit_event.py",
     "mcp/README.md",
 ]
-missing = [path for path in REQUIRED if not (Path.cwd() / path).exists()]
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+missing = [path for path in REQUIRED if not (_REPO_ROOT / path).exists()]
 if missing:
     print("Missing required files:")
     for path in missing:

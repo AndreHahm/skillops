@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import MISSING, dataclass, field, fields, is_dataclass
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any, Literal, get_args, get_origin, get_type_hints
+from typing import Any, Literal, Self, get_args, get_origin, get_type_hints
 
 
 class ModelValidationError(ValueError):
@@ -46,7 +46,7 @@ class StrictModel:
     """Small validation base with Pydantic-like methods used by Phase 1."""
 
     @classmethod
-    def model_validate(cls, data: dict[str, Any]):
+    def model_validate(cls, data: dict[str, Any]) -> Self:
         if not isinstance(data, dict):
             raise ModelValidationError(f"{cls.__name__} expects a mapping")
         allowed = {item.name for item in fields(cls)}
@@ -76,7 +76,7 @@ class StrictModel:
     def model_dump(self, mode: str | None = None, exclude_none: bool = False) -> dict[str, Any]:
         return {
             item.name: _dump(getattr(self, item.name), mode, exclude_none)
-            for item in fields(self)
+            for item in fields(type(self))
             if not (exclude_none and getattr(self, item.name) is None)
         }
 
@@ -144,7 +144,6 @@ class SkillType(StrictModel):
     def _validate(self) -> None:
         if not self.category:
             raise ModelValidationError("type.category is required")
-        self.execution = ExecutionType(self.execution)
 
 
 @dataclass
@@ -226,21 +225,21 @@ class SkillManifest(StrictModel):
         self.status = SkillStatus(self.status)
         self.risk_tier = RiskTier(self.risk_tier)
         if isinstance(self.owner, dict):
-            self.owner = SkillOwner.model_validate(self.owner)
+            self.owner = SkillOwner.model_validate(self.owner)  # type: ignore[arg-type, ty:invalid-argument-type]
         if isinstance(self.type, dict):
-            self.type = SkillType.model_validate(self.type)
+            self.type = SkillType.model_validate(self.type)  # type: ignore[arg-type, ty:invalid-argument-type]
         if isinstance(self.compatibility, dict):
-            self.compatibility = SkillCompatibility.model_validate(self.compatibility)
+            self.compatibility = SkillCompatibility.model_validate(self.compatibility)  # type: ignore[arg-type, ty:invalid-argument-type]
         if isinstance(self.dependencies, dict):
-            self.dependencies = SkillDependencies.model_validate(self.dependencies)
+            self.dependencies = SkillDependencies.model_validate(self.dependencies)  # type: ignore[arg-type, ty:invalid-argument-type]
         if isinstance(self.allowed_tools, dict):
-            self.allowed_tools = SkillAllowedTools.model_validate(self.allowed_tools)
+            self.allowed_tools = SkillAllowedTools.model_validate(self.allowed_tools)  # type: ignore[arg-type, ty:invalid-argument-type]
         if isinstance(self.evals, dict):
-            self.evals = SkillEvals.model_validate(self.evals)
+            self.evals = SkillEvals.model_validate(self.evals)  # type: ignore[arg-type, ty:invalid-argument-type]
         if isinstance(self.provenance, dict):
-            self.provenance = SkillProvenance.model_validate(self.provenance)
+            self.provenance = SkillProvenance.model_validate(self.provenance)  # type: ignore[arg-type, ty:invalid-argument-type]
         if isinstance(self.paths, dict):
-            self.paths = SkillPaths.model_validate(self.paths)
+            self.paths = SkillPaths.model_validate(self.paths)  # type: ignore[arg-type, ty:invalid-argument-type]
 
 
 @dataclass
@@ -259,11 +258,14 @@ class Registry(StrictModel):
     skills: list[RegistrySkillEntry] = field(default_factory=list)
 
     def _validate(self) -> None:
-        self.version = int(self.version)
+        try:
+            self.version = int(self.version)
+        except (ValueError, TypeError) as exc:
+            raise ModelValidationError(f"registry version must be an integer: {self.version}")
         if self.version < 1:
             raise ModelValidationError("registry version must be >= 1")
         self.skills = [
-            RegistrySkillEntry.model_validate(item) if isinstance(item, dict) else item
+            RegistrySkillEntry.model_validate(item) if isinstance(item, dict) else item  # type: ignore[arg-type, ty:invalid-argument-type]
             for item in self.skills
         ]
         if not self.skills:

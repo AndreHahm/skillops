@@ -81,12 +81,20 @@ def health(repo_root: Annotated[Path | None, typer.Option("--repo-root")] = None
 def list_skills(repo_root: Annotated[Path | None, typer.Option("--repo-root")] = None) -> None:
     """List registered skills."""
     root = _repo_root(repo_root)
-    registry = load_registry(root / "registry" / "skills.yaml")
+    try:
+        registry = load_registry(root / "registry" / "skills.yaml")
+    except Exception as exc:
+        console.print(f"[red]Failed to load registry:[/] {exc}")
+        raise typer.Exit(1)
     table = Table(title="Registered Skills")
     for column in ["id", "name", "version", "status", "risk_tier", "owner", "path"]:
         table.add_column(column)
     for entry in registry.skills:
-        manifest = load_skill_manifest(root / entry.path)
+        try:
+            manifest = load_skill_manifest(root / entry.path)
+        except Exception as exc:
+            console.print(f"[red]Failed to load skill manifest for {entry.id}:[/] {exc}")
+            raise typer.Exit(1)
         table.add_row(
             manifest.id,
             manifest.name,
@@ -105,12 +113,20 @@ def inspect(
 ) -> None:
     """Inspect one registered skill."""
     root = _repo_root(repo_root)
-    registry = load_registry(root / "registry" / "skills.yaml")
+    try:
+        registry = load_registry(root / "registry" / "skills.yaml")
+    except Exception as exc:
+        console.print(f"[red]Failed to load registry:[/] {exc}")
+        raise typer.Exit(1)
     entry = next((item for item in registry.skills if item.id == skill_id), None)
     if entry is None:
         console.print(f"[red]Skill not found:[/] {skill_id}")
         raise typer.Exit(1)
-    manifest = load_skill_manifest(root / entry.path)
+    try:
+        manifest = load_skill_manifest(root / entry.path)
+    except Exception as exc:
+        console.print(f"[red]Failed to load skill manifest for {skill_id}:[/] {exc}")
+        raise typer.Exit(1)
     report = validate_registry(root)
     console.print(Panel(manifest.description, title=f"{manifest.name} ({manifest.id})"))
     table = Table(title="Manifest")

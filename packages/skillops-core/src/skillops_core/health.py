@@ -48,12 +48,18 @@ def calculate_skill_health(
         score += 10
     else:
         recommendations.append("Move the skill out of draft after review.")
-    if manifest.dependencies is not None:
+    if "missing-dependencies" not in error_codes:
         score += 10
-    if manifest.allowed_tools is not None:
+    else:
+        recommendations.append("Declare dependencies in the manifest.")
+    if "missing-allowed-tools" not in error_codes:
         score += 10
-    if manifest.evals is not None:
+    else:
+        recommendations.append("Declare allowed tools in the manifest.")
+    if "missing-evals" not in error_codes and "eval-suite-not-configured" not in warning_codes:
         score += 10
+    else:
+        recommendations.append("Add evaluation configuration.")
     if "eval-suite-not-configured" in warning_codes:
         recommendations.append("Configure an evaluation suite in a later evaluation phase.")
 
@@ -86,9 +92,31 @@ def generate_health_report(repo_root: Path) -> HealthReport:
             try:
                 manifest = load_skill_manifest(repo_root / entry.path)
             except Exception:  # noqa: BLE001 - invalid manifests are represented by validation findings.
+                findings = validation_report.findings_for_skill(entry.id)
+                skills.append(
+                    HealthSkillReport(
+                        id=entry.id,
+                        name=entry.id,
+                        version="unknown",
+                        status="invalid",
+                        risk_tier="unknown",
+                        owner="unknown",
+                        score=0,
+                        findings=findings,
+                        recommendations=["Fix manifest validation errors before health scoring."],
+                    )
+                )
                 continue
             skill_validation = validate_skill_manifest(repo_root / entry.path, repo_root)
-            skill_validation.findings.extend(validation_report.findings_for_skill(manifest.id))
+            existing_keys = {
+                (f.level, f.code, f.message, f.path) for f in skill_validation.findings
+            }
+            new_findings = [
+                f
+                for f in validation_report.findings_for_skill(manifest.id)
+                if (f.level, f.code, f.message, f.path) not in existing_keys
+            ]
+            skill_validation.findings.extend(new_findings)
             skills.append(calculate_skill_health(manifest, skill_validation))
     overall_score = round(sum(skill.score for skill in skills) / len(skills), 2) if skills else 0.0
     return HealthReport(

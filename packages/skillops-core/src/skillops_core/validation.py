@@ -5,11 +5,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from skillops_core.models import ModelValidationError, Registry, SkillManifest, ValidationReport
+
 try:
     import yaml
 except ModuleNotFoundError:  # pragma: no cover - used only when PyYAML is unavailable locally.
-    yaml = None
-from skillops_core.models import ModelValidationError, Registry, SkillManifest, ValidationReport
+    yaml = None  # type: ignore
 
 
 def _display_path(path: Path, repo_root: Path) -> str:
@@ -60,6 +61,8 @@ def _simple_yaml_load(text: str) -> dict[str, Any]:
             else:
                 parent.append(_parse_scalar(item_text))
             continue
+        if ":" not in line:
+            raise ValueError(f"Invalid YAML line (missing colon): {line}")
         key, value = line.split(":", 1)
         key = key.strip()
         value = value.strip()
@@ -131,7 +134,7 @@ def validate_skill_manifest(path: Path, repo_root: Path) -> ValidationReport:
         ("evals", "missing-evals"),
     ]:
         if key not in manifest_data or manifest_data[key] in (None, ""):
-            level = "error" if key in {"owner", "risk_tier"} else "error"
+            level = "error" if key in {"owner", "risk_tier"} else "warning"
             report.add(level, code, f"Required field '{key}' is missing.", rel_path)
 
     try:
@@ -192,7 +195,7 @@ def validate_registry(repo_root: Path) -> ValidationReport:
         return report
     try:
         registry_data = load_yaml(registry_path)
-    except (OSError, ValueError, Exception) as exc:
+    except (OSError, ValueError, Exception) as exc:  # noqa: BLE001 - report any parse failure
         report.add(
             "error",
             "invalid-registry-yaml",
@@ -247,7 +250,8 @@ def validate_registry(repo_root: Path) -> ValidationReport:
         report.findings.extend(skill_report.findings)
         try:
             manifest = load_skill_manifest(manifest_path)
-        except (ModelValidationError, OSError, ValueError, Exception):
+        except (ModelValidationError, OSError, ValueError, Exception):  # noqa: BLE001,S112
+            # Validation findings already captured; skip ID mismatch check
             continue
         if manifest.id != entry.id:
             report.add(
