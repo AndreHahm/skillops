@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import MISSING, dataclass, field, fields, is_dataclass
 from datetime import UTC, datetime
 from enum import StrEnum
-from typing import Any, Literal, get_args, get_origin
+from typing import Any, Literal, get_args, get_origin, get_type_hints
 
 
 class ModelValidationError(ValueError):
@@ -53,6 +53,9 @@ class StrictModel:
         extra = set(data) - allowed
         if extra:
             raise ModelValidationError(f"Unexpected fields for {cls.__name__}: {sorted(extra)}")
+
+        hints = get_type_hints(cls)
+
         kwargs: dict[str, Any] = {}
         for item in fields(cls):
             if item.name in data:
@@ -63,7 +66,7 @@ class StrictModel:
                 value = item.default_factory()  # type: ignore[misc]
             else:
                 raise ModelValidationError(f"Missing required field: {item.name}")
-            kwargs[item.name] = _coerce(value, item.type, item.name)
+            kwargs[item.name] = _coerce(value, hints.get(item.name, item.type), item.name)
         obj = cls(**kwargs)
         validate = getattr(obj, "_validate", None)
         if validate:
