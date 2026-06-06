@@ -78,12 +78,13 @@ def _simple_yaml_load(text: str) -> dict[str, Any]:
         else:
             next_container: Any = {}
             for lookahead in lines[index:]:
-                if not lookahead.strip():
+                stripped = lookahead.strip()
+                if not stripped or stripped.startswith("#"):
                     continue
                 look_indent = len(lookahead) - len(lookahead.lstrip(" "))
                 if look_indent <= indent:
                     break
-                if lookahead.strip().startswith("- "):
+                if stripped.startswith("- "):
                     next_container = []
                 break
             parent[key] = next_container
