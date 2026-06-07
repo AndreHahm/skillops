@@ -6,7 +6,21 @@
   "required": ["version", "health"],
   "properties": {
     "version": {"type": "integer", "minimum": 1},
-    "health": {"type": "object"}
+    "health": {
+      "type": "object",
+      "required": ["scoring_model", "max_score"],
+      "additionalProperties": false,
+      "properties": {
+        "scoring_model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_score": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
   },
   "additionalProperties": false
 }

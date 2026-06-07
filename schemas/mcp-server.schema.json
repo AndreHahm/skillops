@@ -6,7 +6,28 @@
   "required": ["version", "mcp_servers"],
   "properties": {
     "version": {"type": "integer", "minimum": 1},
-    "mcp_servers": {"type": "array"}
+    "mcp_servers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "purpose"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
   },
   "additionalProperties": false
 }

@@ -6,7 +6,28 @@
   "required": ["version", "agents"],
   "properties": {
     "version": {"type": "integer", "minimum": 1},
-    "agents": {"type": "array"}
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "role"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
   },
   "additionalProperties": false
 }
