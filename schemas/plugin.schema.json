@@ -1,12 +1,206 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://skillops.dev/schemas/plugin.schema.json",
   "title": "SkillOps Plugin Registry",
   "type": "object",
-  "required": ["version", "plugins"],
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "plugins"
+  ],
   "properties": {
-    "version": {"type": "integer", "minimum": 1},
-    "plugins": {"type": "array"}
-  },
-  "additionalProperties": false
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "version",
+          "status",
+          "description",
+          "publisher",
+          "source",
+          "contents",
+          "compatibility",
+          "governance"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+(-[A-Za-z0-9.-]+)?(\\+[A-Za-z0-9.-]+)?$"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "candidate",
+              "reviewed",
+              "stable",
+              "deprecated",
+              "archived"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20
+          },
+          "publisher": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "contact"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "contact": {
+                "type": "string"
+              }
+            }
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "repository",
+              "license"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "internal",
+                  "third-party",
+                  "fork",
+                  "mirror",
+                  "generated",
+                  "unknown"
+                ]
+              },
+              "repository": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "license": {
+                "type": "string"
+              }
+            }
+          },
+          "contents": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "skills",
+              "mcp_servers",
+              "hooks",
+              "commands"
+            ],
+            "properties": {
+              "skills": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "mcp_servers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "commands": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "compatibility": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "agents",
+              "environments"
+            ],
+            "properties": {
+              "agents": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "environments": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "governance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "risk_tier",
+              "trust_tier",
+              "review_status"
+            ],
+            "properties": {
+              "risk_tier": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high",
+                  "restricted"
+                ]
+              },
+              "trust_tier": {
+                "enum": [
+                  "internal",
+                  "internal-verified",
+                  "partner-verified",
+                  "community-quarantine",
+                  "blocked",
+                  "unknown"
+                ]
+              },
+              "review_status": {
+                "enum": [
+                  "not-reviewed",
+                  "in-review",
+                  "reviewed",
+                  "approved",
+                  "rejected",
+                  "blocked"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
