@@ -1,6 +1,8 @@
+from typing import Final
+
 """Constants for SkillOps core controlled vocabularies and default paths."""
 
-SKILL_STATUSES = {
+SKILL_STATUSES: Final[set[str]] = {
     "draft",
     "candidate",
     "reviewed",
@@ -9,14 +11,14 @@ SKILL_STATUSES = {
     "archived",
 }
 
-RISK_TIERS = {
+RISK_TIERS: Final[set[str]] = {
     "low",
     "medium",
     "high",
     "restricted",
 }
 
-EXECUTION_TYPES = {
+EXECUTION_TYPES: Final[set[str]] = {
     "instruction-only",
     "script-backed",
     "tool-mediated",
@@ -24,7 +26,7 @@ EXECUTION_TYPES = {
     "subagent-spawning",
 }
 
-EVAL_STATUSES = {
+EVAL_STATUSES: Final[set[str]] = {
     "not-configured",
     "planned",
     "passing",
@@ -32,7 +34,7 @@ EVAL_STATUSES = {
     "deprecated",
 }
 
-PROVENANCE_SOURCES = {
+PROVENANCE_SOURCES: Final[set[str]] = {
     "internal",
     "third-party",
     "fork",
@@ -40,12 +42,12 @@ PROVENANCE_SOURCES = {
     "unknown",
 }
 
-FINDING_LEVELS = {
+FINDING_LEVELS: Final[set[str]] = {
     "error",
     "warning",
     "info",
 }
 
-DEFAULT_SKILLS_REGISTRY_PATH = "registry/skills.yaml"
-DEFAULT_HEALTH_REPORT_JSON_PATH = "reports/health/health-report.json"
-DEFAULT_HEALTH_REPORT_MARKDOWN_PATH = "reports/health/health-report.md"
+DEFAULT_SKILLS_REGISTRY_PATH: Final[str] = "registry/skills.yaml"
+DEFAULT_HEALTH_REPORT_JSON_PATH: Final[str] = "reports/health/health-report.json"
+DEFAULT_HEALTH_REPORT_MARKDOWN_PATH: Final[str] = "reports/health/health-report.md"
