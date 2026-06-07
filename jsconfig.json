@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2019"
+  },
+  "include": ["custom-rules/**/*.js"]
+}

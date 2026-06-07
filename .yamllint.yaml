@@ -1,0 +1,39 @@
+extends: default
+
+rules:
+  # YAML-Frontmatter-spezifisch: Häufige Obsidian-Felder
+  key-duplicates: enable
+  new-line-at-end-of-file: enable
+  document-start: disable
+
+  # Zeilenlänge für YAML-Blöcke großzügig (120 Zeichen)
+  line-length:
+    max: 120
+    level: warning
+
+  # Truthy-Werte standardisieren (true/false statt yes/no)
+  truthy:
+    level: warning
+    allowed-values: ['true', 'false']
+
+  # Kommentare optional erlauben
+  comments: disable
+
+  # Typische Obsidian-Fehler vermeiden
+  indentation:
+    spaces: 2                   # 2 Spaces Indent (Obsidian-Standard)
+    indent-sequences: consistent
+  trailing-spaces: enable
+
+  # Arrays/Listen flexibel (Tags, aliases)
+  brackets: disable             # [] optional
+
+  # Datumsformate prüfen (ISO 8601)
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+  hyphens:
+    max-spaces-after: 1
+
+  # Deaktiviere für Markdown-spezifische YAML-Blöcke
+  empty-values: disable         # title: "" erlauben

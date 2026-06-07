@@ -208,7 +208,9 @@ def validate_registry(repo_root: Path) -> ValidationReport:
         report.add("error", "io-error", f"Could not read registry: {exc}", _REGISTRY_PATH)
         return report
     except ValueError as exc:
-        report.add("error", "invalid-registry-yaml", f"Invalid registry YAML: {exc}", _REGISTRY_PATH)
+        report.add(
+            "error", "invalid-registry-yaml", f"Invalid registry YAML: {exc}", _REGISTRY_PATH
+        )
         return report
 
     if "version" not in registry_data:
