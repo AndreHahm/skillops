@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "linear": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@linear/mcp-server"
+      ],
+      "env": {
+        "LINEAR_API_KEY": "REPLACE_WITH_LOCAL_SECRET_NOT_COMMITTED"
+      }
+    }
+  }
+}

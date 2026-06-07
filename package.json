@@ -1,0 +1,11 @@
+{
+  "name": "skillops",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Node.js dependencies for markdownlint plugins",
+  "devDependencies": {
+    "markdownlint": "^0.40.0",
+    "markdownlint-cli2": "^0.22.1",
+    "mkdocs-material-linter": "^1.5.3"
+  }
+}
