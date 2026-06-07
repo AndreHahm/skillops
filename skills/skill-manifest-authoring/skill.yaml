@@ -1,17 +1,19 @@
----
 id: skill-manifest-authoring
 name: Skill Manifest Authoring
 version: 0.1.0
-status: candidate
+status: draft
 risk_tier: low
 description: >
-  Creates and maintains skill.yaml files according to the Agent SkillOps schema.
+  Creates and maintains skill.yaml files according to the SkillOps manifest schema.
+
 owner:
   name: platform
   contact: platform@example.com
+
 type:
   category: governance
   execution: instruction-only
+
 compatibility:
   agents:
     - claude-code
@@ -19,18 +21,23 @@ compatibility:
   environments:
     - ubuntu-24.04
     - windows-11-wsl2
+
 dependencies:
   skills: []
   tools: []
   mcp_servers: []
+
 allowed_tools:
   shell: read-only
   filesystem: read-write
+
 evals:
   suite_id: null
   status: not-configured
+
 provenance:
   source: internal
   license: MIT
+
 paths:
   skill_file: SKILL.md

@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillops.dev/schemas/skill.schema.json",
   "title": "SkillOps Skill Manifest",
   "type": "object",
   "additionalProperties": false,
@@ -26,41 +27,26 @@
     },
     "name": {
       "type": "string",
-      "minLength": 1
+      "minLength": 3
     },
     "version": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[A-Za-z0-9.-]+)?(\\+[A-Za-z0-9.-]+)?$"
     },
     "status": {
-      "enum": [
-        "draft",
-        "candidate",
-        "reviewed",
-        "stable",
-        "deprecated",
-        "archived"
-      ]
+      "enum": ["draft", "candidate", "reviewed", "stable", "deprecated", "archived"]
     },
     "risk_tier": {
-      "enum": [
-        "low",
-        "medium",
-        "high",
-        "restricted"
-      ]
+      "enum": ["low", "medium", "high", "restricted"]
     },
     "description": {
       "type": "string",
-      "minLength": 1
+      "minLength": 20
     },
     "owner": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "name",
-        "contact"
-      ],
+      "required": ["name", "contact"],
       "properties": {
         "name": {
           "type": "string",
@@ -75,13 +61,17 @@
     "type": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "category",
-        "execution"
-      ],
+      "required": ["category", "execution"],
       "properties": {
         "category": {
-          "type": "string"
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "string", "minLength": 1}
+            }
+          ]
         },
         "execution": {
           "enum": [
@@ -97,134 +87,85 @@
     "compatibility": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "agents",
-        "environments"
-      ],
+      "required": ["agents", "environments"],
       "properties": {
         "agents": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "items": {"type": "string", "minLength": 1}
         },
         "environments": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "items": {"type": "string", "minLength": 1}
         }
       }
     },
     "dependencies": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "skills",
-        "tools",
-        "mcp_servers"
-      ],
+      "required": ["skills", "tools", "mcp_servers"],
       "properties": {
         "skills": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "items": {"type": "string", "minLength": 1}
         },
         "tools": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "items": {"type": "string", "minLength": 1}
         },
         "mcp_servers": {
           "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "items": {"type": "string", "minLength": 1}
         }
       }
     },
     "allowed_tools": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["shell", "filesystem"],
       "properties": {
         "shell": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "enum": ["read-only", "read-write", "none"]
         },
         "filesystem": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "network": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "other": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "enum": ["read-only", "read-write", "none"]
         }
       }
     },
     "evals": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "suite_id",
-        "status"
-      ],
+      "required": ["suite_id", "status"],
       "properties": {
         "suite_id": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "status": {
-          "type": "string"
+          "enum": ["not-configured", "planned", "passing", "failing", "deprecated"]
         }
       }
     },
     "provenance": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "source",
-        "license"
-      ],
+      "required": ["source", "license"],
       "properties": {
         "source": {
-          "type": "string"
+          "enum": ["internal", "third-party", "fork", "generated", "unknown"]
         },
         "license": {
-          "type": "string"
-        },
-        "url": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string",
+          "minLength": 1
         }
       }
     },
     "paths": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "skill_file"
-      ],
+      "required": ["skill_file"],
       "properties": {
         "skill_file": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
       }
     }

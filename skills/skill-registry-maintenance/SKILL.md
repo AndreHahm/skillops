@@ -1,19 +1,34 @@
-# Skill Registry Maintenance Skill
+# Skill Registry Maintenance
 
-## How to add a skill
-Create `skills/<id>/SKILL.md` and `skills/<id>/skill.yaml`, then add the manifest path to `registry/skills.yaml`.
+## Purpose
+Maintain `registry/skills.yaml` as the source of truth for registered SkillOps skills and keep it consistent with skill folders.
 
-## How to remove a skill
-Remove the registry entry first, then remove files only when no documentation or references still depend on them.
+## When to use
+Use this skill when adding skills, removing skills, renaming skills, checking registry paths, or reviewing registry consistency before a release.
 
-## How to rename a skill
-Create the new manifest id and path, update registry references, and validate that no duplicate IDs remain.
+## Expected outcome
+The registry validates against schema, references existing `skill.yaml` files, has no duplicate skill IDs, and each registered manifest points to an existing `SKILL.md`.
 
-## How to validate the registry
-Run `uv run skillops validate` or `python scripts/validate_registry.py` from the repository root.
+## Procedure
+1. For adding skills, create `skills/<id>/skill.yaml` and `skills/<id>/SKILL.md`, then add one registry entry.
+2. For removing skills, remove the registry entry and then remove files only when no active references remain.
+3. For renaming skills, update the folder, manifest `id`, registry `id`, registry path, and dependent references together.
+4. Check registry paths are relative to the repository root and end with `skill.yaml`.
+5. Check duplicate skill IDs before and after editing.
+6. Validate the registry against `schemas/registry.schema.json`.
+7. Validate each referenced manifest against `schemas/skill.schema.json`.
+8. Run `uv run skillops validate` when the CLI is available.
 
-## Common errors
-Common errors include duplicate skill IDs, missing manifests, missing SKILL.md files, missing owner data, and invalid risk tiers.
+## Quality checklist
+- `registry/skills.yaml` contains the expected version and skills array.
+- Every registry path exists.
+- Every registry `id` matches the manifest `id`.
+- Every registered skill has a `SKILL.md`.
+- Duplicate skill IDs are detected during review.
+- The review checklist covers schema validation, paths, IDs, owners, risk tiers, and eval metadata.
 
-## Review checklist
-Check unique IDs, valid manifest schema, owner assignment, status, risk tier, dependencies, allowed tools, and eval metadata.
+## Do / don't
+- Do keep registry changes small and auditable.
+- Do preserve stable IDs unless a rename is intentional.
+- Don't leave stale paths after moving skill folders.
+- Don't register a skill before its manifest and documentation are valid.

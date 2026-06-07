@@ -1,3 +1,8 @@
----
 version: 1
-items: []
+agents:
+  - id: claude-code
+    name: Claude Code
+    role: coding-agent
+  - id: codex
+    name: Codex
+    role: implementation-agent

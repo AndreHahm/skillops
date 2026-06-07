@@ -1,10 +1,10 @@
----
 id: valid-skill
 name: Valid Skill
 version: 0.1.0
-status: candidate
+status: draft
 risk_tier: low
-description: A valid fixture skill.
+description: >
+  A valid fixture skill used to verify the SkillOps manifest schema in tests.
 owner:
   name: platform
   contact: platform@example.com
@@ -13,9 +13,11 @@ type:
   execution: instruction-only
 compatibility:
   agents:
+    - claude-code
     - codex
   environments:
     - ubuntu-24.04
+    - windows-11-wsl2
 dependencies:
   skills: []
   tools: []

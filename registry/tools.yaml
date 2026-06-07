@@ -1,3 +1,20 @@
----
 version: 1
-items: []
+tools:
+  - id: uv
+    name: uv
+    category: python-package-manager
+  - id: ruff
+    name: Ruff
+    category: python-linter
+  - id: ty
+    name: ty
+    category: python-type-checker
+  - id: pytest
+    name: pytest
+    category: test-runner
+  - id: markdownlint
+    name: markdownlint
+    category: markdown-linter
+  - id: gh
+    name: GitHub CLI
+    category: github

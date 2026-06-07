@@ -1,3 +1,11 @@
----
 version: 1
-items: []
+mcp_servers:
+  - id: serena
+    name: Serena
+    purpose: semantic-code-search
+  - id: linear
+    name: Linear
+    purpose: project-management
+  - id: filesystem
+    name: Filesystem
+    purpose: local-project-access

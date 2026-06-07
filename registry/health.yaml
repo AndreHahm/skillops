@@ -1,3 +1,4 @@
----
 version: 1
-items: []
+health:
+  scoring_model: phase-1-basic
+  max_score: 100
