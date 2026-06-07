@@ -1,52 +1,43 @@
-"""Models for Phase 1 SkillOps manifests, registries, validation, and health."""
+"""Pydantic models for SkillOps manifests, registries, validation, and health."""
 
 from __future__ import annotations
 
 import re
-from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any, Literal, Self
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from skillops_core.constants import (
+    EVAL_STATUSES,
+    EXECUTION_TYPES,
+    FINDING_LEVELS,
+    PROVENANCE_SOURCES,
+    RISK_TIERS,
+    SKILL_STATUSES,
+)
+from skillops_core.errors import SkillOpsValidationError
+
+SKILL_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*[a-z0-9]$")
+SEMVER_LIKE_PATTERN = re.compile(r"^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
+ALLOWED_TOOL_ACCESS = {"read-only", "read-write", "none"}
 
 
-class ModelValidationError(ValueError):
-    """Raised when model validation fails."""
-
-
-class SkillStatus(StrEnum):
-    draft = "draft"
-    candidate = "candidate"
-    reviewed = "reviewed"
-    stable = "stable"
-    deprecated = "deprecated"
-    archived = "archived"
-
-
-class RiskTier(StrEnum):
-    low = "low"
-    medium = "medium"
-    high = "high"
-    restricted = "restricted"
-
-
-class ExecutionType(StrEnum):
-    instruction_only = "instruction-only"
-    script_backed = "script-backed"
-    tool_mediated = "tool-mediated"
-    mcp_enhanced = "mcp-enhanced"
-    subagent_spawning = "subagent-spawning"
+class ModelValidationError(SkillOpsValidationError):
+    """Raised when SkillOps model validation fails."""
 
 
 class FindingLevel(StrEnum):
+    """Validation finding severity levels."""
+
     error = "error"
     warning = "warning"
     info = "info"
 
 
 class StrictModel(BaseModel):
-    """Pydantic BaseModel base; re-raises ValidationError as ModelValidationError."""
+    """Base model with strict fields and SkillOps validation errors."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -59,84 +50,98 @@ class StrictModel(BaseModel):
 
 
 class SkillOwner(StrictModel):
+    """Owner metadata for a skill."""
+
     name: str
     contact: str
 
-    @model_validator(mode="after")
-    def _validate(self) -> SkillOwner:
-        if not self.name or not self.contact:
-            raise ValueError("owner name and contact are required")
-        return self
-
 
 class SkillType(StrictModel):
-    category: str
-    execution: ExecutionType
+    """Skill type metadata."""
+
+    category: str | list[str]
+    execution: str
 
     @model_validator(mode="after")
-    def _validate(self) -> SkillType:
-        if not self.category:
-            raise ValueError("type.category is required")
+    def _validate_execution(self) -> SkillType:
+        if self.execution not in EXECUTION_TYPES:
+            raise ValueError(f"type.execution must be one of: {sorted(EXECUTION_TYPES)}")
         return self
 
 
 class SkillCompatibility(StrictModel):
-    agents: list[str] = Field(default_factory=list)
-    environments: list[str] = Field(default_factory=list)
+    """Agent and environment compatibility metadata."""
+
+    agents: list[str]
+    environments: list[str]
 
 
 class SkillDependencies(StrictModel):
-    skills: list[str] = Field(default_factory=list)
-    tools: list[str] = Field(default_factory=list)
-    mcp_servers: list[str] = Field(default_factory=list)
+    """Skill dependency metadata."""
+
+    skills: list[str]
+    tools: list[str]
+    mcp_servers: list[str]
 
 
 class SkillAllowedTools(StrictModel):
-    shell: str | None = None
-    filesystem: str | None = None
-    network: str | None = None
-    other: list[str] = Field(default_factory=list)
+    """Allowed shell and filesystem access for a skill."""
+
+    shell: str
+    filesystem: str
+
+    @model_validator(mode="after")
+    def _validate_allowed_tools(self) -> SkillAllowedTools:
+        for field_name in ("shell", "filesystem"):
+            value = getattr(self, field_name)
+            if value not in ALLOWED_TOOL_ACCESS:
+                raise ValueError(
+                    f"allowed_tools.{field_name} must be one of: "
+                    f"{sorted(ALLOWED_TOOL_ACCESS)}"
+                )
+        return self
 
 
 class SkillEvals(StrictModel):
-    suite_id: str | None = None
-    status: str = "not-configured"
+    """Evaluation configuration for a skill."""
+
+    suite_id: str | None
+    status: str
 
     @model_validator(mode="after")
-    def _validate(self) -> SkillEvals:
-        if not self.status:
-            raise ValueError("evals.status is required")
+    def _validate_status(self) -> SkillEvals:
+        if self.status not in EVAL_STATUSES:
+            raise ValueError(f"evals.status must be one of: {sorted(EVAL_STATUSES)}")
         return self
 
 
 class SkillProvenance(StrictModel):
+    """Provenance metadata for a skill."""
+
     source: str
     license: str
-    url: str | None = None
 
     @model_validator(mode="after")
-    def _validate(self) -> SkillProvenance:
-        if not self.source or not self.license:
-            raise ValueError("provenance source and license are required")
+    def _validate_source(self) -> SkillProvenance:
+        if self.source not in PROVENANCE_SOURCES:
+            raise ValueError(f"provenance.source must be one of: {sorted(PROVENANCE_SOURCES)}")
         return self
 
 
 class SkillPaths(StrictModel):
-    skill_file: str = "SKILL.md"
+    """Repository-relative paths declared by a skill manifest."""
 
-    @model_validator(mode="after")
-    def _validate(self) -> SkillPaths:
-        if not self.skill_file:
-            raise ValueError("paths.skill_file is required")
-        return self
+    skill_file: str
 
 
 class SkillManifest(StrictModel):
+    """SkillOps skill manifest model."""
+
     id: str
     name: str
     version: str
-    status: SkillStatus
-    risk_tier: RiskTier
+    status: str
+    risk_tier: str
     description: str
     owner: SkillOwner
     type: SkillType
@@ -148,114 +153,160 @@ class SkillManifest(StrictModel):
     paths: SkillPaths
 
     @model_validator(mode="after")
-    def _validate(self) -> SkillManifest:
-        if not re.match(r"^[a-z0-9][a-z0-9-]*[a-z0-9]$", self.id):
-            raise ValueError("skill id must be lowercase kebab-case with at least 2 characters")
-        for name in ["name", "version", "description"]:
-            if not getattr(self, name):
-                raise ValueError(f"{name} is required")
+    def _validate_manifest(self) -> SkillManifest:
+        if not SKILL_ID_PATTERN.match(self.id):
+            raise ValueError("id must match ^[a-z0-9][a-z0-9-]*[a-z0-9]$")
+        if len(self.name) < 3:
+            raise ValueError("name must be at least 3 characters")
+        if not SEMVER_LIKE_PATTERN.match(self.version):
+            raise ValueError("version must be semantic-version-like, for example 0.1.0")
+        if self.status not in SKILL_STATUSES:
+            raise ValueError(f"status must be one of: {sorted(SKILL_STATUSES)}")
+        if self.risk_tier not in RISK_TIERS:
+            raise ValueError(f"risk_tier must be one of: {sorted(RISK_TIERS)}")
+        if len(self.description) < 20:
+            raise ValueError("description must be at least 20 characters")
         return self
 
 
 class RegistrySkillEntry(StrictModel):
+    """One skill entry in registry/skills.yaml."""
+
     id: str
     path: str
 
     @model_validator(mode="after")
-    def _validate(self) -> RegistrySkillEntry:
-        if not self.id or not self.path:
-            raise ValueError("registry skill id and path are required")
+    def _validate_entry(self) -> RegistrySkillEntry:
+        if not SKILL_ID_PATTERN.match(self.id):
+            raise ValueError("registry skill id must match ^[a-z0-9][a-z0-9-]*[a-z0-9]$")
+        if not self.path.endswith("skill.yaml"):
+            raise ValueError("registry skill path must end with skill.yaml")
         return self
 
 
-class Registry(StrictModel):
+class SkillsRegistry(StrictModel):
+    """SkillOps skills registry model."""
+
     version: int
-    skills: list[RegistrySkillEntry] = Field(default_factory=list)
+    skills: list[RegistrySkillEntry]
 
-    @field_validator("version", mode="before")
-    @classmethod
-    def _coerce_version(cls, v: Any) -> int:
-        try:
-            return int(v)
-        except (ValueError, TypeError) as exc:
-            raise ValueError(f"registry version must be an integer: {v}") from exc
 
-    @model_validator(mode="after")
-    def _validate(self) -> Registry:
-        if self.version < 1:
-            raise ValueError("registry version must be >= 1")
-        if not self.skills:
-            raise ValueError("registry must contain at least one skill")
-        return self
+# Backward-compatible alias for the existing CLI/tests from Package 2.
+Registry = SkillsRegistry
 
 
 class ValidationFinding(StrictModel):
-    level: FindingLevel
+    """A structured validation finding."""
+
+    level: str
     code: str
     message: str
     path: str | None = None
     skill_id: str | None = None
 
+    @model_validator(mode="after")
+    def _validate_level(self) -> ValidationFinding:
+        if self.level not in FINDING_LEVELS:
+            raise ValueError(f"level must be one of: {sorted(FINDING_LEVELS)}")
+        return self
+
 
 class ValidationReport(StrictModel):
+    """Collection of validation findings with convenience counters."""
+
     findings: list[ValidationFinding] = Field(default_factory=list)
-
-    @property
-    def error_count(self) -> int:
-        return sum(1 for finding in self.findings if finding.level == FindingLevel.error)
-
-    @property
-    def warning_count(self) -> int:
-        return sum(1 for finding in self.findings if finding.level == FindingLevel.warning)
-
-    @property
-    def info_count(self) -> int:
-        return sum(1 for finding in self.findings if finding.level == FindingLevel.info)
 
     @property
     def has_errors(self) -> bool:
         return self.error_count > 0
 
+    @property
+    def error_count(self) -> int:
+        return sum(1 for finding in self.findings if finding.level == "error")
+
+    @property
+    def warning_count(self) -> int:
+        return sum(1 for finding in self.findings if finding.level == "warning")
+
+    @property
+    def info_count(self) -> int:
+        return sum(1 for finding in self.findings if finding.level == "info")
+
+    def add_error(
+        self, code: str, message: str, path: str | None = None, skill_id: str | None = None
+    ) -> None:
+        self.findings.append(
+            ValidationFinding(
+                level="error", code=code, message=message, path=path, skill_id=skill_id
+            )
+        )
+
+    def add_warning(
+        self, code: str, message: str, path: str | None = None, skill_id: str | None = None
+    ) -> None:
+        self.findings.append(
+            ValidationFinding(
+                level="warning", code=code, message=message, path=path, skill_id=skill_id
+            )
+        )
+
+    def add_info(
+        self, code: str, message: str, path: str | None = None, skill_id: str | None = None
+    ) -> None:
+        self.findings.append(
+            ValidationFinding(
+                level="info", code=code, message=message, path=path, skill_id=skill_id
+            )
+        )
+
     def add(
         self,
-        level: FindingLevel | Literal["error", "warning", "info"],
+        level: Literal["error", "warning", "info"],
         code: str,
         message: str,
         path: str | None = None,
         skill_id: str | None = None,
     ) -> None:
-        self.findings.append(
-            ValidationFinding(
-                level=FindingLevel(level),
-                code=code,
-                message=message,
-                path=path,
-                skill_id=skill_id,
-            )
-        )
+        if level == "error":
+            self.add_error(code, message, path, skill_id)
+        elif level == "warning":
+            self.add_warning(code, message, path, skill_id)
+        elif level == "info":
+            self.add_info(code, message, path, skill_id)
+        else:
+            msg = f"Invalid finding level {level!r}; expected 'error', 'warning', 'info'"
+            raise ValueError(msg)
+
+    def extend(self, other: ValidationReport) -> None:
+        self.findings.extend(other.findings)
 
     def findings_for_skill(self, skill_id: str) -> list[ValidationFinding]:
         return [finding for finding in self.findings if finding.skill_id == skill_id]
 
 
 class HealthSkillReport(StrictModel):
+    """Health score and findings for one skill."""
+
     id: str
-    name: str
-    version: str
+    score: int
     status: str
     risk_tier: str
-    owner: str
-    score: int
-    findings: list[ValidationFinding] = Field(default_factory=list)
-    recommendations: list[str] = Field(default_factory=list)
+    errors: list[str]
+    warnings: list[str]
+    info: list[str]
 
 
 class HealthReport(StrictModel):
-    overall_score: float
-    validation: ValidationReport
-    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    registry_version: int | None = None
-    skills: list[HealthSkillReport] = Field(default_factory=list)
+    """Repository-level SkillOps health report."""
 
-    def to_jsonable(self) -> dict[str, Any]:
-        return self.model_dump(mode="json")
+    total_skills: int
+    average_health_score: float
+    errors: int
+    warnings: int
+    skills: list[HealthSkillReport]
+
+    @property
+    def overall_score(self) -> float:
+        """Backward-compatible alias for the existing CLI."""
+
+        return self.average_health_score

@@ -1,395 +1,79 @@
 {
-  "overall_score": 100.0,
-  "validation": {
-    "findings": [
-      {
-        "level": "warning",
-        "code": "eval-suite-not-configured",
-        "message": "Evaluation suite is not configured for this skill.",
-        "path": "skills/python-project-setup/skill.yaml",
-        "skill_id": "python-project-setup"
-      },
-      {
-        "level": "info",
-        "code": "no-skill-dependencies",
-        "message": "No skill dependencies declared.",
-        "path": "skills/python-project-setup/skill.yaml",
-        "skill_id": "python-project-setup"
-      },
-      {
-        "level": "info",
-        "code": "no-mcp-servers",
-        "message": "No MCP servers declared.",
-        "path": "skills/python-project-setup/skill.yaml",
-        "skill_id": "python-project-setup"
-      },
-      {
-        "level": "warning",
-        "code": "eval-suite-not-configured",
-        "message": "Evaluation suite is not configured for this skill.",
-        "path": "skills/skill-manifest-authoring/skill.yaml",
-        "skill_id": "skill-manifest-authoring"
-      },
-      {
-        "level": "info",
-        "code": "no-skill-dependencies",
-        "message": "No skill dependencies declared.",
-        "path": "skills/skill-manifest-authoring/skill.yaml",
-        "skill_id": "skill-manifest-authoring"
-      },
-      {
-        "level": "info",
-        "code": "no-mcp-servers",
-        "message": "No MCP servers declared.",
-        "path": "skills/skill-manifest-authoring/skill.yaml",
-        "skill_id": "skill-manifest-authoring"
-      },
-      {
-        "level": "warning",
-        "code": "eval-suite-not-configured",
-        "message": "Evaluation suite is not configured for this skill.",
-        "path": "skills/skill-registry-maintenance/skill.yaml",
-        "skill_id": "skill-registry-maintenance"
-      },
-      {
-        "level": "info",
-        "code": "no-skill-dependencies",
-        "message": "No skill dependencies declared.",
-        "path": "skills/skill-registry-maintenance/skill.yaml",
-        "skill_id": "skill-registry-maintenance"
-      },
-      {
-        "level": "info",
-        "code": "no-mcp-servers",
-        "message": "No MCP servers declared.",
-        "path": "skills/skill-registry-maintenance/skill.yaml",
-        "skill_id": "skill-registry-maintenance"
-      },
-      {
-        "level": "warning",
-        "code": "eval-suite-not-configured",
-        "message": "Evaluation suite is not configured for this skill.",
-        "path": "skills/skill-health-review/skill.yaml",
-        "skill_id": "skill-health-review"
-      },
-      {
-        "level": "info",
-        "code": "no-skill-dependencies",
-        "message": "No skill dependencies declared.",
-        "path": "skills/skill-health-review/skill.yaml",
-        "skill_id": "skill-health-review"
-      },
-      {
-        "level": "info",
-        "code": "no-mcp-servers",
-        "message": "No MCP servers declared.",
-        "path": "skills/skill-health-review/skill.yaml",
-        "skill_id": "skill-health-review"
-      },
-      {
-        "level": "warning",
-        "code": "eval-suite-not-configured",
-        "message": "Evaluation suite is not configured for this skill.",
-        "path": "skills/documentation-maintenance/skill.yaml",
-        "skill_id": "documentation-maintenance"
-      },
-      {
-        "level": "info",
-        "code": "no-skill-dependencies",
-        "message": "No skill dependencies declared.",
-        "path": "skills/documentation-maintenance/skill.yaml",
-        "skill_id": "documentation-maintenance"
-      },
-      {
-        "level": "info",
-        "code": "no-mcp-servers",
-        "message": "No MCP servers declared.",
-        "path": "skills/documentation-maintenance/skill.yaml",
-        "skill_id": "documentation-maintenance"
-      }
-    ]
-  },
-  "generated_at": "2026-06-06T09:21:23.512298+00:00",
-  "registry_version": 1,
+  "total_skills": 5,
+  "average_health_score": 90.0,
+  "errors": 0,
+  "warnings": 10,
   "skills": [
     {
+      "id": "documentation-maintenance",
+      "score": 90,
+      "status": "draft",
+      "risk_tier": "low",
+      "errors": [],
+      "warnings": [
+        "Evaluation suite is not configured.",
+        "Skill is still draft."
+      ],
+      "info": [
+        "No MCP server dependencies declared."
+      ]
+    },
+    {
       "id": "python-project-setup",
-      "name": "Python Project Setup",
-      "version": "0.1.0",
-      "status": "candidate",
+      "score": 90,
+      "status": "draft",
       "risk_tier": "low",
-      "owner": "platform",
-      "score": 100,
-      "findings": [
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/python-project-setup/skill.yaml",
-          "skill_id": "python-project-setup"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/python-project-setup/skill.yaml",
-          "skill_id": "python-project-setup"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/python-project-setup/skill.yaml",
-          "skill_id": "python-project-setup"
-        },
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/python-project-setup/skill.yaml",
-          "skill_id": "python-project-setup"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/python-project-setup/skill.yaml",
-          "skill_id": "python-project-setup"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/python-project-setup/skill.yaml",
-          "skill_id": "python-project-setup"
-        }
+      "errors": [],
+      "warnings": [
+        "Evaluation suite is not configured.",
+        "Skill is still draft."
       ],
-      "recommendations": [
-        "Configure an evaluation suite in a later evaluation phase."
-      ]
-    },
-    {
-      "id": "skill-manifest-authoring",
-      "name": "Skill Manifest Authoring",
-      "version": "0.1.0",
-      "status": "candidate",
-      "risk_tier": "low",
-      "owner": "platform",
-      "score": 100,
-      "findings": [
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/skill-manifest-authoring/skill.yaml",
-          "skill_id": "skill-manifest-authoring"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/skill-manifest-authoring/skill.yaml",
-          "skill_id": "skill-manifest-authoring"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/skill-manifest-authoring/skill.yaml",
-          "skill_id": "skill-manifest-authoring"
-        },
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/skill-manifest-authoring/skill.yaml",
-          "skill_id": "skill-manifest-authoring"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/skill-manifest-authoring/skill.yaml",
-          "skill_id": "skill-manifest-authoring"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/skill-manifest-authoring/skill.yaml",
-          "skill_id": "skill-manifest-authoring"
-        }
-      ],
-      "recommendations": [
-        "Configure an evaluation suite in a later evaluation phase."
-      ]
-    },
-    {
-      "id": "skill-registry-maintenance",
-      "name": "Skill Registry Maintenance",
-      "version": "0.1.0",
-      "status": "candidate",
-      "risk_tier": "low",
-      "owner": "platform",
-      "score": 100,
-      "findings": [
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/skill-registry-maintenance/skill.yaml",
-          "skill_id": "skill-registry-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/skill-registry-maintenance/skill.yaml",
-          "skill_id": "skill-registry-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/skill-registry-maintenance/skill.yaml",
-          "skill_id": "skill-registry-maintenance"
-        },
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/skill-registry-maintenance/skill.yaml",
-          "skill_id": "skill-registry-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/skill-registry-maintenance/skill.yaml",
-          "skill_id": "skill-registry-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/skill-registry-maintenance/skill.yaml",
-          "skill_id": "skill-registry-maintenance"
-        }
-      ],
-      "recommendations": [
-        "Configure an evaluation suite in a later evaluation phase."
+      "info": [
+        "No skill dependencies declared.",
+        "No MCP server dependencies declared."
       ]
     },
     {
       "id": "skill-health-review",
-      "name": "Skill Health Review",
-      "version": "0.1.0",
-      "status": "candidate",
+      "score": 90,
+      "status": "draft",
       "risk_tier": "low",
-      "owner": "platform",
-      "score": 100,
-      "findings": [
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/skill-health-review/skill.yaml",
-          "skill_id": "skill-health-review"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/skill-health-review/skill.yaml",
-          "skill_id": "skill-health-review"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/skill-health-review/skill.yaml",
-          "skill_id": "skill-health-review"
-        },
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/skill-health-review/skill.yaml",
-          "skill_id": "skill-health-review"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/skill-health-review/skill.yaml",
-          "skill_id": "skill-health-review"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/skill-health-review/skill.yaml",
-          "skill_id": "skill-health-review"
-        }
+      "errors": [],
+      "warnings": [
+        "Evaluation suite is not configured.",
+        "Skill is still draft."
       ],
-      "recommendations": [
-        "Configure an evaluation suite in a later evaluation phase."
+      "info": [
+        "No MCP server dependencies declared."
       ]
     },
     {
-      "id": "documentation-maintenance",
-      "name": "Documentation Maintenance",
-      "version": "0.1.0",
-      "status": "candidate",
+      "id": "skill-manifest-authoring",
+      "score": 90,
+      "status": "draft",
       "risk_tier": "low",
-      "owner": "platform",
-      "score": 100,
-      "findings": [
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/documentation-maintenance/skill.yaml",
-          "skill_id": "documentation-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/documentation-maintenance/skill.yaml",
-          "skill_id": "documentation-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/documentation-maintenance/skill.yaml",
-          "skill_id": "documentation-maintenance"
-        },
-        {
-          "level": "warning",
-          "code": "eval-suite-not-configured",
-          "message": "Evaluation suite is not configured for this skill.",
-          "path": "skills/documentation-maintenance/skill.yaml",
-          "skill_id": "documentation-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-skill-dependencies",
-          "message": "No skill dependencies declared.",
-          "path": "skills/documentation-maintenance/skill.yaml",
-          "skill_id": "documentation-maintenance"
-        },
-        {
-          "level": "info",
-          "code": "no-mcp-servers",
-          "message": "No MCP servers declared.",
-          "path": "skills/documentation-maintenance/skill.yaml",
-          "skill_id": "documentation-maintenance"
-        }
+      "errors": [],
+      "warnings": [
+        "Evaluation suite is not configured.",
+        "Skill is still draft."
       ],
-      "recommendations": [
-        "Configure an evaluation suite in a later evaluation phase."
+      "info": [
+        "No skill dependencies declared.",
+        "No MCP server dependencies declared."
+      ]
+    },
+    {
+      "id": "skill-registry-maintenance",
+      "score": 90,
+      "status": "draft",
+      "risk_tier": "low",
+      "errors": [],
+      "warnings": [
+        "Evaluation suite is not configured.",
+        "Skill is still draft."
+      ],
+      "info": [
+        "No MCP server dependencies declared."
       ]
     }
   ]
