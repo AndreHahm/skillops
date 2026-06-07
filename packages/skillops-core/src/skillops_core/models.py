@@ -274,7 +274,8 @@ class ValidationReport(StrictModel):
         elif level == "info":
             self.add_info(code, message, path, skill_id)
         else:
-            raise ValueError(f"Invalid finding level {level!r}; expected 'error', 'warning', or 'info'")
+            msg = f"Invalid finding level {level!r}; expected 'error', 'warning', 'info'"
+            raise ValueError(msg)
 
     def extend(self, other: ValidationReport) -> None:
         self.findings.extend(other.findings)
