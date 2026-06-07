@@ -52,11 +52,11 @@ def calculate_skill_health(
         score += 10
     if manifest.status != "draft":
         score += 10
-    if manifest.dependencies is not None:
+    if any([manifest.dependencies.skills, manifest.dependencies.tools, manifest.dependencies.mcp_servers]):
         score += 10
-    if manifest.allowed_tools is not None:
+    if manifest.allowed_tools.shell != "none" or manifest.allowed_tools.filesystem != "none":
         score += 10
-    if manifest.evals is not None:
+    if manifest.evals.suite_id is not None and manifest.evals.status != "not-configured":
         score += 10
 
     return HealthSkillReport(

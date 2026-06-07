@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_health_score_is_calculated() -> None:
     manifest = load_skill_manifest(ROOT / "skills" / "skill-registry-maintenance" / "skill.yaml")
     report = calculate_skill_health(manifest, ValidationReport())
-    assert report.score == 90
+    assert report.score == 80
     assert report.status == "draft"
 
 

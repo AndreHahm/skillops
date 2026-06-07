@@ -20,7 +20,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
     except yaml.YAMLError as exc:
         raise SkillOpsValidationError(f"Invalid YAML in {path}: {exc}") from exc
-    except OSError as exc:
+    except (OSError, UnicodeDecodeError) as exc:
         raise SkillOpsValidationError(f"Could not read {path}: {exc}") from exc
     if data is None:
         return {}

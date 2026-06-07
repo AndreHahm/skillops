@@ -147,9 +147,9 @@ def _validate_required_and_unexpected_ids(
             skill_id,
         )
     for skill_id in sorted(registry_ids - REQUIRED_CORE_SKILL_IDS):
-        report.add_error(
+        report.add_warning(
             "registry.unexpected_skill",
-            f"Unexpected skill registered for Package 3: {skill_id}",
+            f"Skill is not a required Phase 1 core skill: {skill_id}",
             DEFAULT_SKILLS_REGISTRY_PATH,
             skill_id,
         )

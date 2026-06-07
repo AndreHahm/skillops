@@ -31,7 +31,7 @@ def test_calculate_skill_health_returns_expected_score_for_valid_draft_skill(
 
     health = calculate_skill_health(manifest, validation_report, manifest_path)
 
-    assert health.score == 90
+    assert health.score == 70
 
 
 def test_draft_skill_does_not_receive_status_not_draft_points(tmp_path: Path) -> None:
@@ -41,18 +41,18 @@ def test_draft_skill_does_not_receive_status_not_draft_points(tmp_path: Path) ->
     health = calculate_skill_health(manifest, validation_report, manifest_path)
 
     assert manifest.status == "draft"
-    assert health.score == 90
+    assert health.score == 70
     assert "Skill is still draft." in health.warnings
 
 
-def test_missing_eval_suite_is_warning_but_keeps_eval_field_points(tmp_path: Path) -> None:
+def test_missing_eval_suite_is_warning_and_does_not_earn_eval_points(tmp_path: Path) -> None:
     manifest_path, manifest = _valid_draft_manifest_with_skill_md(tmp_path)
     validation_report = validate_skill_manifest(manifest_path, tmp_path)
 
     health = calculate_skill_health(manifest, validation_report, manifest_path)
 
     assert "Evaluation suite is not configured." in health.warnings
-    assert health.score == 90
+    assert health.score == 70
 
 
 def test_generate_health_report_returns_five_skills_for_current_repository() -> None:
