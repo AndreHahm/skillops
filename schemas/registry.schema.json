@@ -23,7 +23,7 @@
           },
           "path": {
             "type": "string",
-            "pattern": "^skills/[a-z0-9-]+/skill\\\\.yaml$"
+            "pattern": "^skills/[a-z0-9-]+/skill\\.yaml$"
           }
         }
       }
