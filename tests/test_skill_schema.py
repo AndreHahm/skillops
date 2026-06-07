@@ -4,8 +4,8 @@ import pytest
 import yaml
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import ValidationError
-from skillops_core.models import ModelValidationError
-from skillops_core.validation import load_skill_manifest
+from skillops_core.errors import SkillOpsValidationError
+from skillops_core.loaders import load_skill_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -42,7 +42,7 @@ def test_valid_skill_fixture_validates_against_json_schema() -> None:
 
 
 def test_invalid_skill_without_owner_fails() -> None:
-    with pytest.raises(ModelValidationError):
+    with pytest.raises(SkillOpsValidationError):
         load_skill_manifest(FIXTURES / "invalid_skill_missing_owner.yaml")
 
 

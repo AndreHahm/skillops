@@ -1,0 +1,35 @@
+id: invalid-skill-bad-status
+name: Invalid Skill
+version: 0.1.0
+status: unknown-status
+risk_tier: low
+description: >
+  An invalid fixture skill that intentionally uses an unknown status for model tests.
+owner:
+  name: platform
+  contact: platform@example.com
+type:
+  category: test
+  execution: instruction-only
+compatibility:
+  agents:
+    - claude-code
+    - codex
+  environments:
+    - ubuntu-24.04
+    - windows-11-wsl2
+dependencies:
+  skills: []
+  tools: []
+  mcp_servers: []
+allowed_tools:
+  shell: read-only
+  filesystem: read-write
+evals:
+  suite_id: null
+  status: not-configured
+provenance:
+  source: internal
+  license: MIT
+paths:
+  skill_file: SKILL.md

@@ -1,30 +1,20 @@
-# SkillOps Health Report
+# Skill Health Report
 
-Generated at: 2026-06-06T09:21:23.512298+00:00
-Registry version: 1
-Overall score: 100.0
+## Summary
 
-| Skill | Status | Risk | Score | Findings |
-| --- | --- | --- | ---: | ---: |
-| python-project-setup | candidate | low | 100 | 6 |
-| skill-manifest-authoring | candidate | low | 100 | 6 |
-| skill-registry-maintenance | candidate | low | 100 | 6 |
-| skill-health-review | candidate | low | 100 | 6 |
-| documentation-maintenance | candidate | low | 100 | 6 |
+| Metric | Value |
+|---|---:|
+| Total Skills | 5 |
+| Average Health Score | 90.0 |
+| Errors | 0 |
+| Warnings | 10 |
 
-## Recommendations
+## Skills
 
-### python-project-setup
-- Configure an evaluation suite in a later evaluation phase.
-
-### skill-manifest-authoring
-- Configure an evaluation suite in a later evaluation phase.
-
-### skill-registry-maintenance
-- Configure an evaluation suite in a later evaluation phase.
-
-### skill-health-review
-- Configure an evaluation suite in a later evaluation phase.
-
-### documentation-maintenance
-- Configure an evaluation suite in a later evaluation phase.
+| Skill | Score | Status | Risk | Findings |
+|---|---:|---|---|---|
+| documentation-maintenance | 90 | draft | low | 2 warnings, 1 info |
+| python-project-setup | 90 | draft | low | 2 warnings, 2 info |
+| skill-health-review | 90 | draft | low | 2 warnings, 1 info |
+| skill-manifest-authoring | 90 | draft | low | 2 warnings, 2 info |
+| skill-registry-maintenance | 90 | draft | low | 2 warnings, 1 info |

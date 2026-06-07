@@ -1,0 +1,6 @@
+version: 1
+skills:
+  - id: python-project-setup
+    path: skills/python-project-setup/skill.yaml
+  - id: python-project-setup
+    path: skills/python-project-setup/skill.yaml

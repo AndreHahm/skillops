@@ -1,273 +1,239 @@
-"""Validation helpers for SkillOps registries and manifests."""
+"""Validation logic for SkillOps manifests and skills registries."""
 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any
 
-from skillops_core.models import ModelValidationError, Registry, SkillManifest, ValidationReport
+from skillops_core.constants import DEFAULT_SKILLS_REGISTRY_PATH
+from skillops_core.errors import SkillOpsFileNotFoundError, SkillOpsValidationError
+from skillops_core.loaders import load_skill_manifest, load_skills_registry, load_yaml
+from skillops_core.models import SkillManifest, SkillsRegistry, ValidationReport
 
-_REGISTRY_PATH = "registry/skills.yaml"
-
-try:
-    import yaml
-except ModuleNotFoundError:  # pragma: no cover - used only when PyYAML is unavailable locally.
-    yaml = None  # type: ignore
+REQUIRED_CORE_SKILL_IDS = {
+    "python-project-setup",
+    "skill-manifest-authoring",
+    "skill-registry-maintenance",
+    "skill-health-review",
+    "documentation-maintenance",
+}
 
 
 def _display_path(path: Path, repo_root: Path) -> str:
     try:
-        return str(path.relative_to(repo_root))
+        return str(path.resolve().relative_to(repo_root.resolve()))
     except ValueError:
         return str(path)
 
 
-def _parse_scalar(value: str) -> Any:
-    value = value.strip()
-    if value in {"null", "~"}:
-        return None
-    if value == "[]":
-        return []
-    if value in {"true", "false"}:
-        return value == "true"
-    try:
-        return int(value)
-    except ValueError:
-        return value.strip("\"'")
-
-
-def _simple_yaml_load(text: str) -> dict[str, Any]:
-    result: dict[str, Any] = {}
-    stack: list[tuple[int, Any]] = [(-1, result)]
-    lines = text.splitlines()
-    index = 0
-    while index < len(lines):
-        raw = lines[index]
-        index += 1
-        if not raw.strip() or raw.lstrip().startswith("#"):
-            continue
-        indent = len(raw) - len(raw.lstrip(" "))
-        line = raw.strip()
-        while stack and indent <= stack[-1][0]:
-            stack.pop()
-        parent = stack[-1][1]
-        if line.startswith("- "):
-            item_text = line[2:]
-            if not isinstance(parent, list):
-                raise ValueError("Invalid list item placement")
-            if ":" in item_text:
-                key, value = item_text.split(":", 1)
-                item: dict[str, Any] = {key.strip(): _parse_scalar(value) if value.strip() else {}}
-                parent.append(item)
-                stack.append((indent, item))
-            else:
-                parent.append(_parse_scalar(item_text))
-            continue
-        if ":" not in line:
-            raise ValueError(f"Invalid YAML line (missing colon): {line}")
-        key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip()
-        if value == ">":
-            block: list[str] = []
-            while index < len(lines):
-                nxt = lines[index]
-                nxt_indent = len(nxt) - len(nxt.lstrip(" "))
-                if nxt.strip() and nxt_indent <= indent:
-                    break
-                block.append(nxt.strip())
-                index += 1
-            parent[key] = " ".join(part for part in block if part)
-        elif value:
-            parent[key] = _parse_scalar(value)
-        else:
-            next_container: Any = {}
-            for lookahead in lines[index:]:
-                stripped = lookahead.strip()
-                if not stripped or stripped.startswith("#"):
-                    continue
-                look_indent = len(lookahead) - len(lookahead.lstrip(" "))
-                if look_indent <= indent:
-                    break
-                if stripped.startswith("- "):
-                    next_container = []
-                break
-            parent[key] = next_container
-            stack.append((indent, next_container))
-    return result
-
-
-def load_yaml(path: Path) -> dict[str, Any]:
-    text = path.read_text(encoding="utf-8")  # OSError propagates to caller
-    if yaml is not None:
-        try:
-            data = yaml.safe_load(text)
-        except yaml.YAMLError as exc:
-            raise ValueError(f"YAML parse error: {exc}") from exc
-    else:
-        data = _simple_yaml_load(text)  # ValueError propagates to caller
-    if not isinstance(data, dict):
-        raise ValueError(f"YAML document must be a mapping: {path}")
-    return data
-
-
-def load_skill_manifest(path: Path) -> SkillManifest:
-    return SkillManifest.model_validate(load_yaml(path))
-
-
-def load_registry(path: Path) -> Registry:
-    return Registry.model_validate(load_yaml(path))
+def _manifest_skill_id(raw: dict[str, Any]) -> str | None:
+    skill_id = raw.get("id")
+    return skill_id if isinstance(skill_id, str) else None
 
 
 def validate_skill_manifest(path: Path, repo_root: Path) -> ValidationReport:
+    """Validate one skill manifest and its referenced skill file."""
+
     report = ValidationReport()
-    rel_path = _display_path(path, repo_root)
+    display_path = _display_path(path, repo_root)
     if not path.exists():
-        report.add("error", "missing-skill-manifest", "Skill manifest is missing.", rel_path)
+        report.add_error("manifest.missing", "Skill manifest is missing.", display_path)
         return report
+
     try:
-        manifest_data = load_yaml(path)
+        raw_manifest = load_yaml(path)
+    except SkillOpsFileNotFoundError:
+        report.add_error("manifest.missing", "Skill manifest is missing.", display_path)
+        return report
+    except SkillOpsValidationError as exc:
+        report.add_error(
+            "manifest.invalid_yaml", f"Invalid skill manifest YAML: {exc}", display_path
+        )
+        return report
     except OSError as exc:
-        report.add("error", "io-error", f"Could not read skill manifest: {exc}", rel_path)
-        return report
-    except ValueError as exc:
-        report.add("error", "invalid-skill-yaml", f"Invalid skill YAML: {exc}", rel_path)
+        report.add_error(
+            "manifest.invalid_yaml", f"Could not read skill manifest: {exc}", display_path
+        )
         return report
 
-    for key, code in [
-        ("owner", "missing-owner"),
-        ("risk_tier", "missing-risk-tier"),
-        ("dependencies", "missing-dependencies"),
-        ("allowed_tools", "missing-allowed-tools"),
-        ("evals", "missing-evals"),
-    ]:
-        if key not in manifest_data or manifest_data[key] in (None, ""):
-            level: Literal["error", "warning"]
-            level = "error" if key in {"owner", "risk_tier"} else "warning"
-            report.add(level, code, f"Required field '{key}' is missing.", rel_path)
+    raw_skill_id = _manifest_skill_id(raw_manifest)
+    if "owner" not in raw_manifest or raw_manifest.get("owner") in (None, ""):
+        report.add_error(
+            "owner.missing", "Required owner metadata is missing.", display_path, raw_skill_id
+        )
+    if "risk_tier" not in raw_manifest or raw_manifest.get("risk_tier") in (None, ""):
+        report.add_error(
+            "risk_tier.missing", "Required risk tier is missing.", display_path, raw_skill_id
+        )
 
     try:
-        manifest = SkillManifest.model_validate(manifest_data)
-    except ModelValidationError as exc:
-        report.add("error", "invalid-skill-manifest", str(exc), rel_path, manifest_data.get("id"))
+        manifest = SkillManifest.model_validate(raw_manifest)
+    except SkillOpsValidationError as exc:
+        report.add_error(
+            "manifest.invalid_schema",
+            f"Skill manifest does not match the SkillOps schema: {exc}",
+            display_path,
+            raw_skill_id,
+        )
         return report
 
-    skill_doc = path.parent / manifest.paths.skill_file
-    if not skill_doc.exists():
-        report.add(
-            "error",
-            "missing-skill-doc",
+    skill_file_path = path.parent / manifest.paths.skill_file
+    if not skill_file_path.exists():
+        report.add_error(
+            "skill_file.missing",
             f"Referenced skill file is missing: {manifest.paths.skill_file}",
-            _display_path(skill_doc, repo_root),
+            _display_path(skill_file_path, repo_root),
             manifest.id,
         )
+
     if manifest.evals.suite_id is None or manifest.evals.status == "not-configured":
-        report.add(
-            "warning",
-            "eval-suite-not-configured",
-            "Evaluation suite is not configured for this skill.",
-            rel_path,
+        report.add_warning(
+            "evals.not_configured",
+            "Evaluation suite is not configured.",
+            display_path,
             manifest.id,
         )
     if manifest.status == "draft":
-        report.add("warning", "draft-status", "Skill status is draft.", rel_path, manifest.id)
+        report.add_warning("status.draft", "Skill is still draft.", display_path, manifest.id)
     if not manifest.dependencies.skills:
-        report.add(
-            "info",
-            "no-skill-dependencies",
+        report.add_info(
+            "dependencies.skills.empty",
             "No skill dependencies declared.",
-            rel_path,
+            display_path,
             manifest.id,
         )
     if not manifest.dependencies.mcp_servers:
-        report.add(
-            "info",
-            "no-mcp-servers",
-            "No MCP servers declared.",
-            rel_path,
+        report.add_info(
+            "dependencies.mcp_servers.empty",
+            "No MCP server dependencies declared.",
+            display_path,
             manifest.id,
         )
     return report
 
 
-def validate_registry(repo_root: Path) -> ValidationReport:
-    repo_root = repo_root.resolve()
-    report = ValidationReport()
-    registry_path = repo_root / "registry" / "skills.yaml"
-    if not registry_path.exists():
-        report.add(
-            "error",
-            "missing-registry-file",
-            f"{_REGISTRY_PATH} does not exist.",
-            _REGISTRY_PATH,
-        )
-        return report
-    try:
-        registry_data = load_yaml(registry_path)
-    except OSError as exc:
-        report.add("error", "io-error", f"Could not read registry: {exc}", _REGISTRY_PATH)
-        return report
-    except ValueError as exc:
-        report.add(
-            "error", "invalid-registry-yaml", f"Invalid registry YAML: {exc}", _REGISTRY_PATH
-        )
-        return report
-
-    if "version" not in registry_data:
-        report.add(
-            "error",
-            "missing-registry-version",
-            "Registry version is missing.",
-            _REGISTRY_PATH,
-        )
-
-    raw_entries = registry_data.get("skills", [])
+def _add_duplicate_id_findings(raw_registry: dict[str, Any], report: ValidationReport) -> None:
+    raw_entries = raw_registry.get("skills", [])
+    if not isinstance(raw_entries, list):
+        return
     seen: set[str] = set()
-    for entry in raw_entries if isinstance(raw_entries, list) else []:
+    duplicate_ids: set[str] = set()
+    for entry in raw_entries:
         if not isinstance(entry, dict):
             continue
         skill_id = entry.get("id")
-        if skill_id in seen:
-            report.add(
-                "error",
-                "duplicate-skill-id",
-                f"Duplicate skill id: {skill_id}",
-                _REGISTRY_PATH,
+        if not isinstance(skill_id, str):
+            continue
+        if skill_id in seen and skill_id not in duplicate_ids:
+            report.add_error(
+                "registry.duplicate_skill_id",
+                f"Duplicate registry skill id: {skill_id}",
+                DEFAULT_SKILLS_REGISTRY_PATH,
                 skill_id,
             )
-        elif isinstance(skill_id, str):
-            seen.add(skill_id)
+            duplicate_ids.add(skill_id)
+        seen.add(skill_id)
+
+
+def _validate_required_and_unexpected_ids(
+    registry: SkillsRegistry, report: ValidationReport
+) -> None:
+    registry_ids = {entry.id for entry in registry.skills}
+    for skill_id in sorted(REQUIRED_CORE_SKILL_IDS - registry_ids):
+        report.add_error(
+            "registry.required_skill_missing",
+            f"Required Phase 1 core skill is missing from registry: {skill_id}",
+            DEFAULT_SKILLS_REGISTRY_PATH,
+            skill_id,
+        )
+    for skill_id in sorted(registry_ids - REQUIRED_CORE_SKILL_IDS):
+        report.add_error(
+            "registry.unexpected_skill",
+            f"Unexpected skill registered for Package 3: {skill_id}",
+            DEFAULT_SKILLS_REGISTRY_PATH,
+            skill_id,
+        )
+
+
+def validate_skills_registry(repo_root: Path) -> ValidationReport:
+    """Validate registry/skills.yaml and all registered manifests."""
+
+    repo_root = repo_root.resolve()
+    report = ValidationReport()
+    registry_path = repo_root / DEFAULT_SKILLS_REGISTRY_PATH
+    if not registry_path.exists():
+        report.add_error(
+            "registry.missing",
+            f"Required registry file is missing: {DEFAULT_SKILLS_REGISTRY_PATH}",
+            DEFAULT_SKILLS_REGISTRY_PATH,
+        )
+        return report
 
     try:
-        registry = Registry.model_validate(registry_data)
-    except ModelValidationError as exc:
-        report.add("error", "invalid-registry-yaml", str(exc), _REGISTRY_PATH)
+        raw_registry = load_yaml(registry_path)
+    except SkillOpsFileNotFoundError:
+        report.add_error(
+            "registry.missing",
+            f"Required registry file is missing: {DEFAULT_SKILLS_REGISTRY_PATH}",
+            DEFAULT_SKILLS_REGISTRY_PATH,
+        )
         return report
+    except SkillOpsValidationError as exc:
+        report.add_error(
+            "registry.invalid_yaml",
+            f"Invalid skills registry YAML: {exc}",
+            DEFAULT_SKILLS_REGISTRY_PATH,
+        )
+        return report
+    except OSError as exc:
+        report.add_error(
+            "registry.invalid_yaml",
+            f"Could not read skills registry: {exc}",
+            DEFAULT_SKILLS_REGISTRY_PATH,
+        )
+        return report
+
+    _add_duplicate_id_findings(raw_registry, report)
+
+    try:
+        registry = SkillsRegistry.model_validate(raw_registry)
+    except SkillOpsValidationError as exc:
+        report.add_error(
+            "registry.invalid_schema",
+            f"Skills registry does not match the SkillOps schema: {exc}",
+            DEFAULT_SKILLS_REGISTRY_PATH,
+        )
+        return report
+
+    _validate_required_and_unexpected_ids(registry, report)
 
     for entry in registry.skills:
         manifest_path = repo_root / entry.path
         if not manifest_path.exists():
-            report.add(
-                "error",
-                "missing-skill-manifest",
+            report.add_error(
+                "registry.skill_path_missing",
                 f"Registered skill manifest is missing: {entry.path}",
                 entry.path,
                 entry.id,
             )
             continue
-        skill_report = validate_skill_manifest(manifest_path, repo_root)
-        report.findings.extend(skill_report.findings)
+
+        manifest_report = validate_skill_manifest(manifest_path, repo_root)
+        report.extend(manifest_report)
         try:
             manifest = load_skill_manifest(manifest_path)
-        except (OSError, ValueError, ModelValidationError):
-            # Validation findings already captured; skip ID mismatch check
+        except SkillOpsValidationError:
             continue
         if manifest.id != entry.id:
-            report.add(
-                "error",
-                "registry-id-mismatch",
+            report.add_error(
+                "registry.skill_id_mismatch",
                 f"Registry id '{entry.id}' does not match manifest id '{manifest.id}'.",
                 entry.path,
                 entry.id,
             )
     return report
+
+
+# Backward-compatible alias for the existing CLI from Package 2.
+validate_registry = validate_skills_registry
+load_registry = load_skills_registry
