@@ -109,6 +109,14 @@ def generate_health_report(repo_root: Path) -> HealthReport:
             skills.append(_invalid_skill_health(entry.id, registry_validation_report))
             continue
         skill_validation_report = validate_skill_manifest(manifest_path, repo_root)
+        registry_findings = [
+            f.model_copy(update={"skill_id": manifest.id})
+            for f in registry_validation_report.findings
+            if f.skill_id is None
+        ]
+        for finding in registry_findings:
+            finding.skill_id = entry.id
+        skill_validation_report.findings.extend(registry_findings)
         skills.append(calculate_skill_health(manifest, skill_validation_report, manifest_path))
 
     average = round(sum(skill.score for skill in skills) / len(skills), 2) if skills else 0.0

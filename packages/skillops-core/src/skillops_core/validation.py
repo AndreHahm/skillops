@@ -219,6 +219,9 @@ def validate_skills_registry(repo_root: Path) -> ValidationReport:
             continue
 
         manifest_report = validate_skill_manifest(manifest_path, repo_root)
+        for finding in manifest_report.findings:
+            if finding.skill_id is None:
+                finding.skill_id = entry.id
         report.extend(manifest_report)
         try:
             manifest = load_skill_manifest(manifest_path)
