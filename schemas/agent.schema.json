@@ -1,18 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "SkillOps agent registry placeholder",
+  "$id": "https://skillops.dev/schemas/agent.schema.json",
+  "title": "SkillOps Agent Registry",
   "type": "object",
-  "required": [
-    "version",
-    "items"
-  ],
+  "required": ["version", "agents"],
   "properties": {
-    "version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "items": {
-      "type": "array"
-    }
-  }
+    "version": {"type": "integer", "minimum": 1},
+    "agents": {"type": "array"}
+  },
+  "additionalProperties": false
 }

@@ -1,17 +1,19 @@
----
 id: python-project-setup
 name: Python Project Setup
 version: 0.1.0
-status: candidate
+status: draft
 risk_tier: low
 description: >
-  Supports Python project setup with uv, Ruff, ty, pytest, and clean project structure.
+  Supports Python project setup with uv, Ruff, ty, pytest, and a clean package structure.
+
 owner:
   name: platform
   contact: platform@example.com
+
 type:
-  category: engineering
+  category: development
   execution: instruction-only
+
 compatibility:
   agents:
     - claude-code
@@ -19,18 +21,27 @@ compatibility:
   environments:
     - ubuntu-24.04
     - windows-11-wsl2
+
 dependencies:
   skills: []
-  tools: []
+  tools:
+    - uv
+    - ruff
+    - ty
+    - pytest
   mcp_servers: []
+
 allowed_tools:
   shell: read-only
   filesystem: read-write
+
 evals:
   suite_id: null
   status: not-configured
+
 provenance:
   source: internal
   license: MIT
+
 paths:
   skill_file: SKILL.md

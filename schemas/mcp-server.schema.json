@@ -1,18 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "SkillOps mcp-server registry placeholder",
+  "$id": "https://skillops.dev/schemas/mcp-server.schema.json",
+  "title": "SkillOps MCP Server Registry",
   "type": "object",
-  "required": [
-    "version",
-    "items"
-  ],
+  "required": ["version", "mcp_servers"],
   "properties": {
-    "version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "items": {
-      "type": "array"
-    }
-  }
+    "version": {"type": "integer", "minimum": 1},
+    "mcp_servers": {"type": "array"}
+  },
+  "additionalProperties": false
 }

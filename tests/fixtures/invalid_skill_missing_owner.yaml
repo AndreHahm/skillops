@@ -1,18 +1,20 @@
----
-id: valid-skill
-name: Valid Skill
+id: invalid-skill-missing-owner
+name: Invalid Skill
 version: 0.1.0
-status: candidate
+status: draft
 risk_tier: low
-description: A valid fixture skill.
+description: >
+  An invalid fixture skill that intentionally omits owner metadata for schema tests.
 type:
   category: test
   execution: instruction-only
 compatibility:
   agents:
+    - claude-code
     - codex
   environments:
     - ubuntu-24.04
+    - windows-11-wsl2
 dependencies:
   skills: []
   tools: []

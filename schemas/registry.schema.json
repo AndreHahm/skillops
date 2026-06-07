@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillops.dev/schemas/registry.schema.json",
+  "title": "SkillOps Skill Registry",
   "type": "object",
-  "required": [
-    "version",
-    "skills"
-  ],
+  "additionalProperties": false,
+  "required": ["version", "skills"],
   "properties": {
     "version": {
       "type": "integer",
@@ -14,16 +14,16 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "path"
-        ],
+        "additionalProperties": false,
+        "required": ["id", "path"],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
           },
           "path": {
-            "type": "string"
+            "type": "string",
+            "pattern": "skill\\.yaml$"
           }
         }
       }

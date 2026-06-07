@@ -1,13 +1,16 @@
----
 version: 1
 skills:
   - id: python-project-setup
     path: skills/python-project-setup/skill.yaml
+
   - id: skill-manifest-authoring
     path: skills/skill-manifest-authoring/skill.yaml
+
   - id: skill-registry-maintenance
     path: skills/skill-registry-maintenance/skill.yaml
+
   - id: skill-health-review
     path: skills/skill-health-review/skill.yaml
+
   - id: documentation-maintenance
     path: skills/documentation-maintenance/skill.yaml
