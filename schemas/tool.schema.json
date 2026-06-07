@@ -1,18 +1,33 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "SkillOps tool registry placeholder",
+  "$id": "https://skillops.dev/schemas/tool.schema.json",
+  "title": "SkillOps Tool Registry",
   "type": "object",
-  "required": [
-    "version",
-    "items"
-  ],
+  "required": ["version", "tools"],
   "properties": {
-    "version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "items": {
-      "type": "array"
+    "version": {"type": "integer", "minimum": 1},
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "category"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
-  }
+  },
+  "additionalProperties": false
 }

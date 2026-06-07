@@ -16,7 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_health_score_is_calculated() -> None:
     manifest = load_skill_manifest(ROOT / "skills" / "skill-registry-maintenance" / "skill.yaml")
     report = calculate_skill_health(manifest, ValidationReport())
-    assert report.score == 100
+    assert report.score == 90
+    assert "Move the skill out of draft after review." in report.recommendations
 
 
 def test_health_report_json_and_markdown_can_be_generated(tmp_path: Path) -> None:

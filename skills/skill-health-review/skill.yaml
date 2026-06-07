@@ -1,17 +1,19 @@
----
 id: skill-health-review
 name: Skill Health Review
 version: 0.1.0
-status: candidate
+status: draft
 risk_tier: low
 description: >
-  Reviews skill health based on score, findings, and governance criteria.
+  Reviews skill health using validation findings, basic scoring, and governance readiness criteria.
+
 owner:
   name: platform
   contact: platform@example.com
+
 type:
   category: governance
   execution: instruction-only
+
 compatibility:
   agents:
     - claude-code
@@ -19,18 +21,24 @@ compatibility:
   environments:
     - ubuntu-24.04
     - windows-11-wsl2
+
 dependencies:
-  skills: []
+  skills:
+    - skill-registry-maintenance
   tools: []
   mcp_servers: []
+
 allowed_tools:
   shell: read-only
   filesystem: read-write
+
 evals:
   suite_id: null
   status: not-configured
+
 provenance:
   source: internal
   license: MIT
+
 paths:
   skill_file: SKILL.md

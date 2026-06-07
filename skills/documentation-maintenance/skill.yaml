@@ -1,17 +1,19 @@
----
 id: documentation-maintenance
 name: Documentation Maintenance
 version: 0.1.0
-status: candidate
+status: draft
 risk_tier: low
 description: >
-  Keeps README, docs, and LLM-Wiki synchronized with registry and SkillOps concepts.
+  Keeps README files, project documentation, and the LLM-Wiki aligned with SkillOps concepts and registry changes.
+
 owner:
   name: platform
   contact: platform@example.com
+
 type:
   category: documentation
   execution: instruction-only
+
 compatibility:
   agents:
     - claude-code
@@ -19,18 +21,25 @@ compatibility:
   environments:
     - ubuntu-24.04
     - windows-11-wsl2
+
 dependencies:
-  skills: []
-  tools: []
+  skills:
+    - skill-registry-maintenance
+  tools:
+    - markdownlint
   mcp_servers: []
+
 allowed_tools:
   shell: read-only
   filesystem: read-write
+
 evals:
   suite_id: null
   status: not-configured
+
 provenance:
   source: internal
   license: MIT
+
 paths:
   skill_file: SKILL.md
