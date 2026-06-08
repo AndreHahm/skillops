@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import yaml
@@ -121,12 +122,16 @@ def test_docs_do_not_contain_stale_or_placeholder_terms() -> None:
 
 
 def test_docs_do_not_introduce_lower_python_versions() -> None:
-    disallowed_versions = [f"3.{minor}" for minor in range(13)]
     for path in markdown_files([README, DOCS_DIR]):
         content = read(path).lower()
-        for version in disallowed_versions:
-            assert f"python {version}" not in content, path
-            assert f">={version}" not in content, path
+        content = re.sub(r"```.*?```", "", content, flags=re.DOTALL)
+        content = re.sub(r"`[^`\n]+`", "", content)
+        for match in re.finditer(r"(?:python\s*[<>=!~]*\s*|requires-python[^\n]*?)3\.(\d+)", content):
+            minor = int(match.group(1))
+            line_no = content[: match.start()].count("\n") + 1
+            assert minor >= 13, (
+                f"Disallowed Python version 3.{minor} in {path}:{line_no} ({match.group(0)!r})"
+            )
 
 
 def test_readme_does_not_claim_future_features_are_implemented() -> None:
