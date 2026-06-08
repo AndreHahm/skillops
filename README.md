@@ -36,6 +36,15 @@ uv run skillops health
 ```
 Reports are written to `reports/health/health-report.json` and `reports/health/health-report.md`.
 
+
+## CLI MVP
+```bash
+uv run skillops validate
+uv run skillops health
+uv run skillops list
+uv run skillops inspect skill-registry-maintenance
+```
+
 ## Core Concepts
 A skill has a manifest, owner, risk tier, allowed tools, dependencies, provenance, and documentation. The registry is the central source of truth. Health scores summarize Phase 1 hygiene.
 
