@@ -55,6 +55,9 @@ def main() -> int:
     if not repo_root.exists():
         print(f"error: repository root does not exist: {repo_root}", file=sys.stderr)
         return 1
+    if not repo_root.is_dir():
+        print(f"error: repository root is not a directory: {repo_root}", file=sys.stderr)
+        return 1
 
     try:
         report = generate_health_report(repo_root)
@@ -69,9 +72,13 @@ def main() -> int:
         print(f"error: could not write health report: {exc}", file=sys.stderr)
         return 1
 
+    jsonpath = json_path.relative_to(repo_root) \
+        if json_path.is_relative_to(repo_root) else json_path
+    markdownpath = markdown_path.relative_to(repo_root) \
+        if markdown_path.is_relative_to(repo_root) else markdown_path
     print("Generated SkillOps health reports:")
-    print(f"- {json_path.relative_to(repo_root)}")
-    print(f"- {markdown_path.relative_to(repo_root)}")
+    print(f"- {jsonpath}")
+    print(f"- {markdownpath}")
     print(f"Overall score: {report.overall_score}")
     return 0
 
