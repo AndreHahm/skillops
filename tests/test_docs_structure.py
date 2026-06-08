@@ -126,7 +126,10 @@ def test_docs_do_not_introduce_lower_python_versions() -> None:
         content = read(path).lower()
         content = re.sub(r"```.*?```", "", content, flags=re.DOTALL)
         content = re.sub(r"`[^`\n]+`", "", content)
-        for match in re.finditer(r"(?:python\s*[<>=!~]*\s*|requires-python[^\n]*?)3\.(\d+)", content):
+        for match in re.finditer(
+            r"(?:python\s*[<>=!~]*\s*|requires-python[^\n]*?)3\.(\d+)",
+            content
+        ):
             minor = int(match.group(1))
             line_no = content[: match.start()].count("\n") + 1
             assert minor >= 13, (
