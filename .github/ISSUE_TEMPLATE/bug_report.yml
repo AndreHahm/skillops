@@ -1,16 +1,61 @@
----
 name: Bug report
 description: Report a reproducible SkillOps problem.
+title: "Bug: "
+labels:
+  - bug
 body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected package or area
+      options:
+        - core
+        - cli
+        - schema
+        - registry
+        - skills
+        - docs
+        - agent-setup
+        - ci
+        - other
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
       label: Description
+      description: What happened?
     validations:
       required: true
   - type: textarea
-    id: steps
+    id: reproduction_steps
     attributes:
       label: Reproduction steps
+      description: List the exact steps or commands needed to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: command_output
+    attributes:
+      label: Command output
+      description: Paste relevant output, logs, or tracebacks.
+      render: shell
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include OS, Python version, uv version, and SkillOps version or commit.
     validations:
       required: true

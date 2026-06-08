@@ -1,16 +1,56 @@
----
 name: Feature request
-description: Suggest a focused improvement.
+description: Suggest a focused SkillOps improvement.
+title: "Feature: "
+labels:
+  - enhancement
 body:
+  - type: markdown
+    attributes:
+      value: Please do not request future-phase work as if it is already implemented; describe the phase relevance and keep the request scoped.
+  - type: dropdown
+    id: affected_area
+    attributes:
+      label: Affected area
+      options:
+        - core
+        - cli
+        - schema
+        - registry
+        - skills
+        - docs
+        - agent-setup
+        - ci
+        - other
+    validations:
+      required: true
   - type: textarea
     id: problem
     attributes:
       label: Problem
+      description: What problem should this solve?
     validations:
       required: true
   - type: textarea
-    id: proposal
+    id: proposed_solution
     attributes:
-      label: Proposal
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What should be included and explicitly excluded?
+    validations:
+      required: true
+  - type: textarea
+    id: phase_relevance
+    attributes:
+      label: Phase relevance
+      description: Explain whether this belongs to Phase 1 or a later phase.
     validations:
       required: true

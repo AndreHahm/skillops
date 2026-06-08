@@ -84,6 +84,20 @@ uv run skillops validate
 uv run skillops health --no-write
 ```
 
+## CI
+
+The Phase 1 CI workflow runs on pull requests and pushes to `main`.
+
+It checks:
+
+- Ruff
+- pytest
+- SkillOps registry validation
+- SkillOps health report generation
+- Markdownlint when available
+
+Generated health reports may be uploaded as CI artifacts.
+
 ## CLI Usage
 
 ```bash

@@ -1,16 +1,71 @@
----
 name: Skill request
-description: Propose a new managed skill.
+description: Propose a new managed SkillOps skill.
+title: "Skill: "
+labels:
+  - skill
 body:
-  - type: input
-    id: skill_id
+  - type: markdown
     attributes:
-      label: Skill ID
+      value: Every skill needs `SKILL.md`, `skill.yaml`, a registry entry, and validation before it can be accepted.
+  - type: input
+    id: proposed_skill_id
+    attributes:
+      label: Proposed skill ID
+      description: Use stable lowercase kebab-case.
+      placeholder: example-skill-id
     validations:
       required: true
   - type: textarea
-    id: purpose
+    id: skill_purpose
     attributes:
-      label: Purpose
+      label: Skill purpose
+    validations:
+      required: true
+  - type: textarea
+    id: expected_users
+    attributes:
+      label: Expected users
+    validations:
+      required: true
+  - type: textarea
+    id: expected_inputs
+    attributes:
+      label: Expected inputs
+    validations:
+      required: true
+  - type: textarea
+    id: expected_outputs
+    attributes:
+      label: Expected outputs
+    validations:
+      required: true
+  - type: dropdown
+    id: risk_tier
+    attributes:
+      label: Risk tier
+      options:
+        - low
+        - medium
+        - high
+    validations:
+      required: true
+  - type: textarea
+    id: required_tools
+    attributes:
+      label: Required tools
+      description: List required CLI tools, MCP servers, or other local capabilities.
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List skill, package, or documentation dependencies.
+  - type: textarea
+    id: related_existing_skills
+    attributes:
+      label: Related existing skills
+  - type: textarea
+    id: documentation_needs
+    attributes:
+      label: Documentation needs
     validations:
       required: true

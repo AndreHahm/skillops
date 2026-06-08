@@ -1,37 +1,59 @@
----
 name: CI
 
 on:
   pull_request:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  test:
+  ci:
+    name: Phase 1 CI
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "3.13"
+
       - name: Install dependencies
         run: uv sync --all-packages --dev
+
       - name: Run Ruff
         run: uv run ruff check .
-      - name: Run pytest
+
+      - name: Run tests
         run: uv run pytest
-      - name: Validate registry
+
+      - name: Validate SkillOps registry
         run: uv run skillops validate
-      - name: Generate health report
+
+      - name: Generate SkillOps health report
         run: uv run skillops health
-      - name: Run markdownlint if available
+
+      - name: Run markdownlint
         run: |
           if command -v markdownlint-cli2 >/dev/null 2>&1; then
             markdownlint-cli2 "**/*.md"
+          elif command -v markdownlint >/dev/null 2>&1; then
+            markdownlint "**/*.md"
           else
-            echo "markdownlint-cli2 is not installed; skipping advisory check."
+            echo "markdownlint is not installed; skipping markdown lint check."
           fi
+
+      - name: Upload health reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skillops-health-reports
+          path: |
+            reports/health/health-report.json
+            reports/health/health-report.md
+          if-no-files-found: ignore
