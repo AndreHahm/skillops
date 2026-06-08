@@ -45,6 +45,19 @@ uv run skillops list
 uv run skillops inspect skill-registry-maintenance
 ```
 
+## Agent Setup
+
+This repository includes starter instructions for Claude Code and Codex:
+
+- `CLAUDE.md`
+- `AGENTS.md`
+- `.claude/`
+- `.codex/`
+- `hooks/`
+- `mcp/`
+
+The Phase 1 hook and MCP files are examples only and do not include real credentials.
+
 ## Core Concepts
 A skill has a manifest, owner, risk tier, allowed tools, dependencies, provenance, and documentation. The registry is the central source of truth. Health scores summarize Phase 1 hygiene.
 

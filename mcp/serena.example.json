@@ -1,13 +1,14 @@
 {
-  "mcpServers": {
-    "serena": {
-      "command": "serena",
-      "args": [
-        "start-mcp-server",
-        "--project",
-        "/path/to/skillops"
-      ],
-      "env": {}
-    }
+  "name": "serena",
+  "purpose": "semantic-code-search",
+  "enabled": false,
+  "configuration": {
+    "command": "serena",
+    "args": [],
+    "project_root": "${SKILLOPS_REPO_ROOT}"
+  },
+  "security": {
+    "requires_review": true,
+    "no_secrets": true
   }
 }
