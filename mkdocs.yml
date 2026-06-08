@@ -1,8 +1,8 @@
----
-site_name: SkillOps
+site_name: skillops
 site_description: Open-source SkillOps control plane for managed agent skill repositories.
-theme:
-  name: material
+repo_name: skillops
+docs_dir: docs
+
 nav:
   - Home: index.md
   - Architecture:
@@ -17,3 +17,6 @@ nav:
       - Skill Maintenance: skill-authoring/skill-maintenance.md
   - Roadmap:
       - Phase 1 Foundation: roadmap/phase-1-foundation.md
+
+theme:
+  name: material
