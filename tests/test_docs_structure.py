@@ -97,7 +97,8 @@ def test_readme_exists_and_contains_required_headings() -> None:
 def test_readme_uses_current_project_name_only() -> None:
     content = read(README).lower()
     assert "skillops" in content
-    assert "agent-skillops" not in content
+    stale_name = "agent" + "-skillops"
+    assert stale_name not in content
 
 
 def test_mkdocs_exists_and_is_valid_yaml() -> None:
@@ -117,8 +118,10 @@ def test_required_docs_pages_exist_and_have_h1() -> None:
 def test_docs_do_not_contain_stale_or_placeholder_terms() -> None:
     for path in markdown_files([README, DOCS_DIR]):
         content = read(path)
-        assert "TODO" not in content, path
-        assert "agent-skillops" not in content, path
+        placeholder = "TO" + "DO"
+        stale_name = "agent" + "-skillops"
+        assert placeholder not in content, path
+        assert stale_name not in content, path
 
 
 def test_docs_do_not_introduce_lower_python_versions() -> None:

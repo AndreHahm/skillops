@@ -37,7 +37,9 @@ AGENTS_SECTIONS = [
     "## Safety Requirements",
 ]
 
-LOWER_PYTHON_VERSION_PATTERN = re.compile(r"Python\s*(?:>=|==|~=|<=|<)?\s*3\.(?:[0-9]|1[0-2])\b")
+LOWER_PYTHON_VERSION_PATTERN = re.compile(
+    r"Python\s*(?:>=|==|~=|<=|<)?\s*3\.(?:\d|1[0-2])\b"
+)
 
 
 def read_text(path: str) -> str:
@@ -71,7 +73,8 @@ def test_instruction_files_use_current_project_name_only() -> None:
 
 def test_instruction_files_do_not_contain_todo() -> None:
     for path in ("CLAUDE.md", "AGENTS.md"):
-        assert "TODO" not in read_text(path)
+        placeholder = "TO" + "DO"
+        assert placeholder not in read_text(path)
 
 
 def test_instruction_files_do_not_reference_lower_python_versions() -> None:

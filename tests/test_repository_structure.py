@@ -128,3 +128,19 @@ def test_package_8_files_do_not_contain_stale_repository_name() -> None:
 
 def test_package_8_files_do_not_introduce_lower_python_versions() -> None:
     assert not LOWER_PYTHON_PATTERN.search(read_package_8_text())
+
+
+def test_workspace_packages_use_uv_build_backend() -> None:
+    """Workspace packages should sync without fetching an extra build backend."""
+
+    import tomllib
+
+    package_pyprojects = [
+        REPO_ROOT / "packages" / "skillops-core" / "pyproject.toml",
+        REPO_ROOT / "packages" / "skillops-cli" / "pyproject.toml",
+    ]
+    for path in package_pyprojects:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+        build_system = data["build-system"]
+        assert build_system["build-backend"] == "uv_build"
+        assert any(req.startswith("uv_build") for req in build_system["requires"])

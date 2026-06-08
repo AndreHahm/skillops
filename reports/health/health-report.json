@@ -1,12 +1,12 @@
 {
   "total_skills": 5,
-  "average_health_score": 90.0,
+  "average_health_score": 78.0,
   "errors": 0,
   "warnings": 10,
   "skills": [
     {
       "id": "documentation-maintenance",
-      "score": 90,
+      "score": 80,
       "status": "draft",
       "risk_tier": "low",
       "errors": [],
@@ -20,7 +20,7 @@
     },
     {
       "id": "python-project-setup",
-      "score": 90,
+      "score": 80,
       "status": "draft",
       "risk_tier": "low",
       "errors": [],
@@ -35,7 +35,7 @@
     },
     {
       "id": "skill-health-review",
-      "score": 90,
+      "score": 80,
       "status": "draft",
       "risk_tier": "low",
       "errors": [],
@@ -49,7 +49,7 @@
     },
     {
       "id": "skill-manifest-authoring",
-      "score": 90,
+      "score": 70,
       "status": "draft",
       "risk_tier": "low",
       "errors": [],
@@ -64,7 +64,7 @@
     },
     {
       "id": "skill-registry-maintenance",
-      "score": 90,
+      "score": 80,
       "status": "draft",
       "risk_tier": "low",
       "errors": [],
