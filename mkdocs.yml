@@ -15,6 +15,11 @@ nav:
       - Skill Manifest: skill-authoring/skill-manifest.md
       - Skill Testing: skill-authoring/skill-testing.md
       - Skill Maintenance: skill-authoring/skill-maintenance.md
+  - Evaluation:
+      - Overview: evaluation/overview.md
+      - Golden Sets: evaluation/golden-sets.md
+      - Review Gates: evaluation/review-gates.md
+      - Skill-TDD: evaluation/skill-tdd.md
   - Roadmap:
       - Phase 1 Foundation: roadmap/phase-1-foundation.md
 

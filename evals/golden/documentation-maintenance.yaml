@@ -1,0 +1,40 @@
+version: 1
+skill_id: documentation-maintenance
+cases:
+  - id: docs-update-happy-path
+    title: Documentation update happy path
+    category: happy_path
+    input: |
+      Update user-facing docs after adding evaluation schemas and registry metadata.
+    expected:
+      contains:
+        - implemented behavior only
+        - README docs LLM-Wiki ADR separation
+        - no stale project names
+      not_contains:
+        - Promptfoo execution is implemented
+        - DeepEval execution is implemented
+        - agent-skillops
+      must_reference:
+        - docs/evaluation/overview.md
+        - llm-wiki/concepts/evaluation.md
+        - skillops
+    notes: Documentation should describe the evaluation foundation without overclaiming runtime features.
+  - id: future-feature-overclaim-scope-creep
+    title: Future feature overclaim scope creep
+    category: scope_creep
+    input: |
+      Add docs saying SkillOps now performs marketplace promotion, dependency graph analysis, and self-improvement automation.
+    expected:
+      contains:
+        - planned for later
+        - do not claim future features
+        - correct stale names
+      not_contains:
+        - marketplace promotion is implemented
+        - dependency graph analysis is implemented
+        - self-improvement automation is implemented
+      must_reference:
+        - docs/roadmap/phase-1-foundation.md
+        - llm-wiki
+    notes: Documentation maintenance should prevent future-phase claims from appearing as current behavior.

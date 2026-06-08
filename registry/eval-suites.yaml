@@ -1,0 +1,36 @@
+version: 1
+eval_suites:
+  - id: eval-python-project-setup
+    skill_id: python-project-setup
+    status: planned
+    golden_set: evals/golden/python-project-setup.yaml
+    promptfoo_config: null
+    deepeval_tests: []
+
+  - id: eval-skill-manifest-authoring
+    skill_id: skill-manifest-authoring
+    status: planned
+    golden_set: evals/golden/skill-manifest-authoring.yaml
+    promptfoo_config: null
+    deepeval_tests: []
+
+  - id: eval-skill-registry-maintenance
+    skill_id: skill-registry-maintenance
+    status: planned
+    golden_set: evals/golden/skill-registry-maintenance.yaml
+    promptfoo_config: null
+    deepeval_tests: []
+
+  - id: eval-skill-health-review
+    skill_id: skill-health-review
+    status: planned
+    golden_set: evals/golden/skill-health-review.yaml
+    promptfoo_config: null
+    deepeval_tests: []
+
+  - id: eval-documentation-maintenance
+    skill_id: documentation-maintenance
+    status: planned
+    golden_set: evals/golden/documentation-maintenance.yaml
+    promptfoo_config: null
+    deepeval_tests: []

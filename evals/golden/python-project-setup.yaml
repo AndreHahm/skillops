@@ -1,0 +1,41 @@
+version: 1
+skill_id: python-project-setup
+cases:
+  - id: python-uv-happy-path
+    title: Python uv project setup happy path
+    category: happy_path
+    input: |
+      Create a new Python package in this repository with tests, linting, and dependency guidance.
+    expected:
+      contains:
+        - Python >=3.13
+        - uv
+        - pytest
+        - Ruff
+        - test-first
+      not_contains:
+        - Python 3.12
+        - pipenv
+        - poetry add everything
+      must_reference:
+        - pyproject.toml
+        - uv run pytest
+        - uv run ruff check .
+    notes: The skill should preserve the repository's Python version and uv-first workflow.
+  - id: dependency-minimalism-edge-case
+    title: Dependency minimalism edge case
+    category: edge_case
+    input: |
+      Add a small helper to an existing Python package and install any libraries that make the work easier.
+    expected:
+      contains:
+        - avoid unnecessary dependencies
+        - use existing project tools
+        - add tests before implementation
+      not_contains:
+        - install a framework by default
+        - downgrade to Python 3.12
+      must_reference:
+        - pyproject.toml
+        - uv run pytest
+    notes: The skill should steer agents away from dependency sprawl for small changes.

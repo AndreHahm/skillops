@@ -1,0 +1,39 @@
+version: 1
+skill_id: skill-registry-maintenance
+cases:
+  - id: registry-entry-happy-path
+    title: Registry entry happy path
+    category: happy_path
+    input: |
+      Register a new core skill whose manifest already exists under skills/example-skill/skill.yaml.
+    expected:
+      contains:
+        - registry entry
+        - matching manifest id
+        - path exists
+        - run validation
+      not_contains:
+        - silently rename the skill
+        - skip duplicate checks
+      must_reference:
+        - registry/skills.yaml
+        - skills/example-skill/skill.yaml
+        - uv run skillops validate
+    notes: Registry maintenance should align IDs and paths before considering the task complete.
+  - id: duplicate-id-invalid-input
+    title: Duplicate ID invalid input
+    category: invalid_input
+    input: |
+      Add another registry entry with the id python-project-setup but point it at a different path.
+    expected:
+      contains:
+        - duplicate ID
+        - validation error
+        - do not silently rename
+      not_contains:
+        - accept both entries
+        - auto-generate a replacement id
+      must_reference:
+        - registry/skills.yaml
+        - uv run skillops validate
+    notes: Duplicate IDs must be surfaced instead of hidden through implicit renaming.

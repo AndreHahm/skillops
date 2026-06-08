@@ -1,0 +1,41 @@
+version: 1
+skill_id: skill-manifest-authoring
+cases:
+  - id: manifest-valid-structure-happy-path
+    title: Manifest valid structure happy path
+    category: happy_path
+    input: |
+      Draft a skill.yaml for a new low-risk instruction-only repository maintenance skill.
+    expected:
+      contains:
+        - required manifest fields
+        - controlled values
+        - risk tier reasoning
+        - least-privilege allowed tools
+      not_contains:
+        - unrestricted tools by default
+        - omit dependencies
+      must_reference:
+        - schemas/skill.schema.json
+        - risk_tier
+        - allowed_tools
+        - dependencies
+    notes: Manifest authoring should produce schema-valid metadata with explicit governance choices.
+  - id: manifest-risk-scope-creep
+    title: Manifest risk scope creep
+    category: scope_creep
+    input: |
+      Make the new skill able to write files, call external APIs, and run shell commands even though it only edits docs.
+    expected:
+      contains:
+        - least privilege
+        - justify risk tier
+        - keep allowed tools narrow
+      not_contains:
+        - grant unrestricted access
+        - ignore risk tier
+      must_reference:
+        - allowed_tools
+        - risk_tier
+        - provenance
+    notes: The skill should reject unnecessary escalation while still explaining valid manifest fields.

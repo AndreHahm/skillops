@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillops.dev/schemas/eval-suite.schema.json",
+  "title": "SkillOps Evaluation Suite Registry",
+  "description": "Registry-backed evaluation suite metadata for SkillOps skills.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "eval_suites"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "eval_suites": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "skill_id",
+          "status",
+          "golden_set",
+          "promptfoo_config",
+          "deepeval_tests"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^eval-[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "skill_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["planned", "draft", "active", "deprecated"]
+          },
+          "golden_set": {
+            "type": "string",
+            "pattern": "^evals/golden/[a-z0-9][a-z0-9-]*[a-z0-9]\\.yaml$"
+          },
+          "promptfoo_config": {
+            "type": ["string", "null"]
+          },
+          "deepeval_tests": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  }
+}

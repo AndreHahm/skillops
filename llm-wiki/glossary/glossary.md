@@ -38,7 +38,7 @@ A skill, tool, or MCP server that another skill declares as related or required 
 
 ## Evaluation
 
-A structured check of skill behavior or quality. Full evaluation integrations are planned for later phases.
+A structured check of skill behavior or quality. Phase 2 Package 1 adds static golden sets and eval suite metadata; Promptfoo execution and DeepEval execution are planned for later phases.
 
 ## Health Report
 

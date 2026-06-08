@@ -6,9 +6,9 @@ description: skillops Documentation
 
 ## Project Overview
 
-`skillops` is the Phase 1 foundation for managing agent skill repositories with schemas, manifests, a canonical registry, validation, health reporting, core skills, agent setup, and documentation.
+`skillops` is the foundation for managing agent skill repositories with schemas, manifests, canonical registries, validation, health reporting, core skills, agent setup, documentation, and initial evaluation metadata.
 
-The project is intentionally small in Phase 1. It establishes repository hygiene and shared vocabulary before adding larger systems such as marketplace workflows, dependency graph generation, evaluation integrations, observability integrations, or release automation.
+The project remains intentionally small. Phase 2 Package 1 establishes static evaluation schemas, golden sets, and suite metadata, while Promptfoo execution, DeepEval execution, marketplace workflows, dependency graph generation, production observability integrations, and release automation are planned later or not implemented.
 
 ## Current MVP Scope
 
@@ -21,7 +21,8 @@ The current MVP scope includes:
 - five core skills for repository maintenance;
 - Claude Code and Codex setup files;
 - hook examples and disabled MCP example configs;
-- documentation and LLM-Wiki foundations.
+- documentation and LLM-Wiki foundations;
+- metadata-only evaluation schemas, golden sets, and eval suite registry entries.
 
 Future phases are planned extension areas. They are not implemented unless explicitly described as current behavior in this repository.
 
@@ -34,6 +35,10 @@ Future phases are planned extension areas. They are not implemented unless expli
 - [Skill manifest authoring](skill-authoring/skill-manifest.md)
 - [Skill testing](skill-authoring/skill-testing.md)
 - [Skill maintenance](skill-authoring/skill-maintenance.md)
+- [Evaluation overview](evaluation/overview.md)
+- [Golden sets](evaluation/golden-sets.md)
+- [Evaluation review gates](evaluation/review-gates.md)
+- [Skill-TDD](evaluation/skill-tdd.md)
 - [Phase 1 roadmap](roadmap/phase-1-foundation.md)
 
 ## Relationship Between docs and LLM-Wiki
