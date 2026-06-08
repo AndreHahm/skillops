@@ -81,9 +81,18 @@ def append_event(event: dict[str, Any], output_path: Path) -> None:
 def main() -> int:
     """CLI entry point."""
     args = parse_args()
-    event = apply_cli_fields(read_stdin_event(), args)
     output_path = resolve_output_path(args.repo_root, args.output)
-    append_event(event, output_path)
+    try:
+        try:
+            stdin_event = read_stdin_event()
+        except (json.JSONDecodeError, ValueError) as err:
+            print(f"Error: Invalid JSON input or structure: {err}", file=sys.stderr)
+            return 1
+        event = apply_cli_fields(stdin_event, args)
+        append_event(event, output_path)
+    except OSError as err:
+        print(f"Error: Failed to write event to {output_path}: {err}", file=sys.stderr)
+        return 1
     return 0
 
 
