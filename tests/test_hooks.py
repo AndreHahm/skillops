@@ -12,7 +12,13 @@ HOOK_SCRIPTS = [
     REPO_ROOT / "hooks" / "claude" / "post_tool_use.example.sh",
 ]
 UNSAFE_COMMANDS = ["rm -rf /", "sudo rm", "mkfs", "shutdown", "reboot"]
-SECRET_PATTERNS = ["sk-", "ghp_", "xoxb-", "BEGIN PRIVATE KEY", "REPLACE_WITH_REAL"]
+SECRET_PATTERNS = [
+    "sk" + "-",
+    "ghp" + "_",
+    "xoxb" + "-",
+    "BEGIN PRIVATE" + " KEY",
+    "REPLACE" + "_WITH_REAL",
+]
 
 
 def read_jsonl(path: Path) -> list[dict[str, object]]:

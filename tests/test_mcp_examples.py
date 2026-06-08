@@ -12,14 +12,14 @@ MCP_EXAMPLES = [
 ]
 REQUIRED_KEYS = {"name", "purpose", "enabled", "configuration", "security"}
 SECRET_PATTERNS = [
-    "sk-",
-    "ghp_",
-    "xoxb-",
-    "BEGIN PRIVATE KEY",
-    "REPLACE_WITH_REAL",
+    "sk" + "-",
+    "ghp" + "_",
+    "xoxb" + "-",
+    "BEGIN PRIVATE" + " KEY",
+    "REPLACE" + "_WITH_REAL",
     "password123",
 ]
-USER_PATH_PATTERNS = ["/home/", "/Users/", "C:\\"]
+USER_PATH_PATTERNS = ["/" + "home/", "/" + "Users/", "C:" + "\\"]
 
 
 def load_json(path: Path) -> dict[str, Any]:

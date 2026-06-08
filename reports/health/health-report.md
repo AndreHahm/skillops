@@ -5,7 +5,7 @@
 | Metric | Value |
 |---|---:|
 | Total Skills | 5 |
-| Average Health Score | 90.0 |
+| Average Health Score | 78.0 |
 | Errors | 0 |
 | Warnings | 10 |
 
@@ -13,8 +13,8 @@
 
 | Skill | Score | Status | Risk | Findings |
 |---|---:|---|---|---|
-| documentation-maintenance | 90 | draft | low | 2 warnings, 1 info |
-| python-project-setup | 90 | draft | low | 2 warnings, 2 info |
-| skill-health-review | 90 | draft | low | 2 warnings, 1 info |
-| skill-manifest-authoring | 90 | draft | low | 2 warnings, 2 info |
-| skill-registry-maintenance | 90 | draft | low | 2 warnings, 1 info |
+| documentation-maintenance | 80 | draft | low | 2 warnings, 1 info |
+| python-project-setup | 80 | draft | low | 2 warnings, 2 info |
+| skill-health-review | 80 | draft | low | 2 warnings, 1 info |
+| skill-manifest-authoring | 70 | draft | low | 2 warnings, 2 info |
+| skill-registry-maintenance | 80 | draft | low | 2 warnings, 1 info |

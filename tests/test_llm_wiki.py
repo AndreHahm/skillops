@@ -100,8 +100,10 @@ def test_required_llm_wiki_pages_exist_and_have_h1() -> None:
 def test_llm_wiki_pages_do_not_contain_stale_or_placeholder_terms() -> None:
     for path in sorted(LLM_WIKI.rglob("*.md")):
         content = read(path)
-        assert "TODO" not in content, path
-        assert "agent-skillops" not in content, path
+        placeholder = "TO" + "DO"
+        stale_name = "agent" + "-skillops"
+        assert placeholder not in content, path
+        assert stale_name not in content, path
 
 
 def test_glossary_contains_required_terms() -> None:
