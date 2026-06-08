@@ -10,6 +10,7 @@ import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.text import Text
 from skillops_core import (
     generate_health_report,
     load_skill_manifest,
@@ -27,6 +28,7 @@ from skillops_core.health import write_health_report_json, write_health_report_m
 from skillops_core.models import (
     RegistrySkillEntry,
     SkillManifest,
+    SkillsRegistry,
     ValidationFinding,
     ValidationReport,
 )
@@ -47,11 +49,10 @@ RepoRootOption = Annotated[
 
 
 def _resolve_repo_root(repo_root: Path) -> Path:
-    return Path(repo_root).resolve()
+    return repo_root.resolve()
 
 
 def _relative_to_repo(path: Path, repo_root: Path) -> Path:
-    path = Path(path)
     if not path.is_absolute():
         return path
     try:
@@ -61,7 +62,6 @@ def _relative_to_repo(path: Path, repo_root: Path) -> Path:
 
 
 def _resolve_output_path(path: Path, repo_root: Path) -> Path:
-    path = Path(path)
     return path if path.is_absolute() else repo_root / path
 
 
@@ -101,6 +101,7 @@ def _render_findings(
 def _print_validation_summary(report: ValidationReport, *, strict: bool) -> None:
     failed = report.has_errors or (strict and report.warning_count > 0)
     result = "FAIL" if failed else "PASS"
+    result_style = "bold red" if failed else "bold green"
     console.print("[bold]SkillOps Validation[/]")
     console.print()
     console.print("[bold]Summary:[/]")
@@ -108,30 +109,35 @@ def _print_validation_summary(report: ValidationReport, *, strict: bool) -> None
     console.print(f"- Warnings: {report.warning_count}")
     console.print(f"- Info: {report.info_count}")
     console.print()
-    console.print(f"[bold]Result:[/] {result}")
+    console.print("[bold]Result:[/] ", Text(result, style=result_style), sep="")
     if strict and report.warning_count > 0 and not report.has_errors:
-        console.print("Strict mode: WARNING findings are treated as failures.")
+        console.print("[yellow]Strict mode: WARNING findings are treated as failures.[/]")
 
 
-def _load_registry_or_exit(repo_root: Path):
+def _load_registry_or_exit(repo_root: Path) -> SkillsRegistry:
+    registry_path = repo_root / DEFAULT_SKILLS_REGISTRY_PATH
     try:
-        return load_skills_registry(repo_root / DEFAULT_SKILLS_REGISTRY_PATH)
+        return load_skills_registry(registry_path)
     except SkillOpsError as exc:
         _print_error(f"Failed to load registry: {exc}")
         raise typer.Exit(1) from exc
     except Exception as exc:
-        _print_error(f"Failed to load registry: {exc}")
+        _print_error(f"Failed unexpectedly to load registry ({registry_path}): {exc}")
+        console.print_exception()
         raise typer.Exit(1) from exc
 
 
 def _load_manifest_or_exit(repo_root: Path, entry: RegistrySkillEntry) -> SkillManifest:
+    manifest_path = repo_root / entry.path
+    msg = "Failed to load skill manifest for"
     try:
-        return load_skill_manifest(repo_root / entry.path)
+        return load_skill_manifest(manifest_path)
     except SkillOpsError as exc:
-        _print_error(f"Failed to load skill manifest for {entry.id}: {exc}")
+        _print_error(f"{msg} {entry.id}: {exc}")
         raise typer.Exit(1) from exc
     except Exception as exc:
-        _print_error(f"Failed to load skill manifest for {entry.id}: {exc}")
+        _print_error(f"{msg} {entry.id} ({manifest_path}): {exc}")
+        console.print_exception()
         raise typer.Exit(1) from exc
 
 
@@ -182,15 +188,24 @@ def health(
     repo_root: RepoRootOption = Path("."),
     json_path: Annotated[
         Path,
-        typer.Option("--json-path", help="Path for the JSON health report."),
+        typer.Option(
+            "--json-path",
+            help="Path for the JSON health report."
+        ),
     ] = Path(DEFAULT_HEALTH_REPORT_JSON_PATH),
     markdown_path: Annotated[
         Path,
-        typer.Option("--markdown-path", help="Path for the Markdown health report."),
+        typer.Option(
+            "--markdown-path",
+            help="Path for the Markdown health report."
+        ),
     ] = Path(DEFAULT_HEALTH_REPORT_MARKDOWN_PATH),
     no_write: Annotated[
         bool,
-        typer.Option("--no-write", help="Print the health summary without writing reports."),
+        typer.Option(
+            "--no-write",
+            help="Print the health summary without writing reports."
+        ),
     ] = False,
 ) -> None:
     """Generate SkillOps health reports."""
@@ -266,18 +281,22 @@ def list_skills(
 
 
 @app.command()
-def inspect(skill_id: str, repo_root: RepoRootOption = Path(".")) -> None:
+def inspect(
+    skill_id: Annotated[str, typer.Argument(help="The ID of the skill to inspect.")],
+    repo_root: RepoRootOption = Path(".")
+) -> None:
     """Inspect one registered skill."""
 
     root = _resolve_repo_root(repo_root)
-    registry = _load_registry_or_exit(root)
-    entry = next((item for item in registry.skills if item.id == skill_id), None)
+    reg = _load_registry_or_exit(root)
+    entry = next((item for item in reg.skills if item.id == skill_id), None)
     if entry is None:
         _print_error(f"Skill not found: {skill_id}")
         raise typer.Exit(1)
 
     manifest = _load_manifest_or_exit(root, entry)
-    validation_report = validate_skill_manifest(root / entry.path, root)
+    validation_report = validate_skill_manifest(
+        root / entry.path, root)
 
     console.print(Panel(manifest.description, title=f"{manifest.name} ({manifest.id})"))
 
@@ -294,7 +313,11 @@ def inspect(skill_id: str, repo_root: RepoRootOption = Path(".")) -> None:
             f"Description: {manifest.description.strip()}"
         ),
     )
-    _add_section(table, "Owner", f"Name: {manifest.owner.name}\nContact: {manifest.owner.contact}")
+    _add_section(
+        table,
+        "Owner",
+        f"Name: {manifest.owner.name}\nContact: {manifest.owner.contact}"
+    )
     _add_section(
         table,
         "Status and Risk",
@@ -308,7 +331,10 @@ def inspect(skill_id: str, repo_root: RepoRootOption = Path(".")) -> None:
     _add_section(
         table,
         "Compatibility",
-        f"Agents:\n{_format_list(manifest.compatibility.agents)}\nEnvironments:\n{_format_list(manifest.compatibility.environments)}",
+        (
+            f"Agents:\n{_format_list(manifest.compatibility.agents)}\n"
+            f"Environments:\n{_format_list(manifest.compatibility.environments)}"
+        ),
     )
     _add_section(
         table,
@@ -319,9 +345,21 @@ def inspect(skill_id: str, repo_root: RepoRootOption = Path(".")) -> None:
             f"MCP Servers:\n{_format_list(manifest.dependencies.mcp_servers)}"
         ),
     )
-    _add_section(table, "Allowed Tools", _format_dict(manifest.allowed_tools.model_dump()))
-    _add_section(table, "Evals", _format_dict(manifest.evals.model_dump()))
-    _add_section(table, "Provenance", _format_dict(manifest.provenance.model_dump()))
+    _add_section(
+        table,
+        "Allowed Tools",
+        _format_dict(manifest.allowed_tools.model_dump())
+    )
+    _add_section(
+        table,
+        "Evals",
+        _format_dict(manifest.evals.model_dump())
+    )
+    _add_section(
+        table,
+        "Provenance",
+        _format_dict(manifest.provenance.model_dump())
+    )
     _add_section(
         table,
         "Paths",
