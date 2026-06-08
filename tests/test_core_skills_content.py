@@ -57,8 +57,12 @@ def test_core_skill_markdown_has_frontmatter_and_required_sections(skill_id: str
     skill_md = (_skill_dir(skill_id) / "SKILL.md").read_text(encoding="utf-8")
 
     assert skill_md.startswith("---\n")
-    assert "\nname:" in skill_md.split("---", maxsplit=2)[1]
-    assert "\ndescription:" in skill_md.split("---", maxsplit=2)[1]
+    parts = skill_md.split("---", maxsplit=2)
+    assert len(parts) >= 3
+    frontmatter = yaml.safe_load(parts[1])
+    assert isinstance(frontmatter, dict)
+    assert "name" in frontmatter
+    assert "description" in frontmatter
     for section in REQUIRED_SECTIONS:
         assert f"## {section}" in skill_md
 
