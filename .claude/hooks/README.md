@@ -1,3 +1,5 @@
-# Claude Hooks
+# Claude Code Hook Notes
 
-Example hooks live in `hooks/claude/` and emit local JSONL events only.
+Hook examples live in `hooks/claude/`.
+
+Do not store secrets in hooks. Phase 1 hook telemetry is local-only and writes example JSONL events through `hooks/shared/emit_event.py`. Observability backend integration is out of scope for Phase 1.

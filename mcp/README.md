@@ -1,9 +1,11 @@
 # MCP Example Configurations
 
-These files are examples only and contain no real secrets.
+These MCP files are example configs only. They are disabled by default and use placeholders rather than real credentials or host-specific paths.
 
-- `serena.example.json` shows semantic code search and codebase understanding configuration.
-- `linear.example.json` shows project management integration with a placeholder token name.
-- `filesystem.example.json` shows local project access constrained to an allowed repository path.
+Copy examples to a local ignored configuration location if needed, then provide local secrets through environment variables outside git. Do not commit real secrets, API keys, tokens, or local user-specific absolute paths.
 
-Copy an example into your local agent configuration and replace placeholder paths or environment variables outside git.
+- `serena.example.json` is for semantic code search and codebase understanding.
+- `linear.example.json` is for project management.
+- `filesystem.example.json` is for local project access within an allowed repository scope.
+
+MCP integrations are examples only in Phase 1; production integration, credential handling, and automation are out of scope.

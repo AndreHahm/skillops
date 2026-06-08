@@ -27,3 +27,6 @@ ci:
     uv run pytest
     uv run skillops validate
     uv run skillops health
+
+agent-test:
+    uv run pytest tests/test_agent_setup.py tests/test_hooks.py tests/test_mcp_examples.py

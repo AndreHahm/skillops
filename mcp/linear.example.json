@@ -1,14 +1,13 @@
 {
-  "mcpServers": {
-    "linear": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@linear/mcp-server"
-      ],
-      "env": {
-        "LINEAR_API_KEY": "REPLACE_WITH_LOCAL_SECRET_NOT_COMMITTED"
-      }
-    }
+  "name": "linear",
+  "purpose": "project-management",
+  "enabled": false,
+  "configuration": {
+    "server": "linear-mcp",
+    "token_env_var": "LINEAR_API_KEY"
+  },
+  "security": {
+    "requires_local_secret": true,
+    "do_not_commit_token": true
   }
 }

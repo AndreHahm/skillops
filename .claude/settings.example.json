@@ -1,26 +1,12 @@
 {
+  "project": "skillops",
+  "notes": "Example Claude Code settings. Copy to a local ignored settings file if needed.",
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "hooks/claude/pre_tool_use.example.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "hooks/claude/post_tool_use.example.sh"
-          }
-        ]
-      }
-    ]
+    "pre_tool_use": "hooks/claude/pre_tool_use.example.sh",
+    "post_tool_use": "hooks/claude/post_tool_use.example.sh"
+  },
+  "safety": {
+    "no_secrets_in_repo": true,
+    "no_real_tokens": true
   }
 }

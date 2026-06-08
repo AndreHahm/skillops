@@ -1,12 +1,15 @@
 {
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/path/to/skillops"
-      ]
-    }
+  "name": "filesystem",
+  "purpose": "local-project-access",
+  "enabled": false,
+  "configuration": {
+    "allowed_roots": [
+      "${SKILLOPS_REPO_ROOT}"
+    ],
+    "read_only_by_default": true
+  },
+  "security": {
+    "least_privilege": true,
+    "no_user_home_root": true
   }
 }
