@@ -37,7 +37,9 @@ AGENTS_SECTIONS = [
     "## Safety Requirements",
 ]
 
-LOWER_PYTHON_VERSION_PATTERN = re.compile(r"Python\s*(?:>=|==|~=|<=|<)?\s*3\.(?:[0-9]|1[0-2])\b")
+LOWER_PYTHON_VERSION_PATTERN = re.compile(
+    r"Python\s*(?:>=|==|~=|<=|<)?\s*3\.(?:\d|1[0-2])\b"
+)
 
 
 def read_text(path: str) -> str:

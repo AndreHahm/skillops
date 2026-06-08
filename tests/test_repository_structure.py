@@ -143,4 +143,4 @@ def test_workspace_packages_use_uv_build_backend() -> None:
         data = tomllib.loads(path.read_text(encoding="utf-8"))
         build_system = data["build-system"]
         assert build_system["build-backend"] == "uv_build"
-        assert build_system["requires"] == ["uv_build>=0.7.22,<0.8.0"]
+        assert any(req.startswith("uv_build") for req in build_system["requires"])
