@@ -17,15 +17,21 @@ Phase 1 establishes the repository foundation for `skillops`: schemas, registry 
 5. Core Skills.
 6. Agent Setup.
 7. Docs & LLM-Wiki.
-8. CI Foundation planned.
+8. CI Foundation.
 
 ## Completed Foundation Areas
 
-The repository currently contains the Phase 1 schema and registry foundation, reusable core package, CLI MVP, five core skills, agent setup files, hook examples, MCP examples, documentation pages, and LLM-Wiki pages.
+The repository currently contains the Phase 1 schema and registry foundation, reusable core package, CLI MVP, five core skills, agent setup files, hook examples, MCP examples, documentation pages, LLM-Wiki pages, and CI foundation configuration.
+
+## Package 8: CI Foundation
+
+Package 8 establishes the Phase 1 CI workflow, local just commands, markdownlint configuration, repository structure checks, and GitHub contribution templates.
+
+It does not implement release automation, deployment automation, marketplace publication, or evaluation integrations.
 
 ## Remaining Phase 1 Areas
 
-Package 8, CI Foundation, is planned. Until it is implemented, CI finalization should not be described as complete.
+Phase 1 foundation package configuration is present. Repository checks and documentation should still be kept aligned as changes are made.
 
 ## Out of Scope
 
