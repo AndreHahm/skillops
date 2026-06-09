@@ -2,7 +2,7 @@
 
 A Golden Set is a versioned YAML file with representative scenarios for one SkillOps skill. Golden Sets make behavior reviewable by defining what a good skill response should include, what it should avoid, and which files, commands, or concepts it should reference.
 
-Golden Sets support Skill-TDD by giving reviewers regression assets before executable evaluation runners exist. A maintainer can add or update cases for desired behavior, review the skill against those cases, and later reuse the same assets when Promptfoo and DeepEval integration packages are implemented.
+Golden Sets support Skill-TDD by making the eval case first. They are the canonical scenario assets: a maintainer adds or updates cases for desired behavior, then aligns the skill, Promptfoo configuration, DeepEval skeletons, and review notes to those cases.
 
 ## Implemented Now
 
@@ -11,14 +11,14 @@ Golden Sets support Skill-TDD by giving reviewers regression assets before execu
 - schema validation through `schemas/golden-set.schema.json`
 - consistency tests for completeness, required categories, registry references, future-feature overclaims, secrets, and local path drift
 
-## Planned for Later Phase 2 Packages
+## Relationship to Other Skill-TDD Layers
 
-- Promptfoo configuration and execution
-- DeepEval tests and execution
-- CI smoke eval command
-- richer judge-based scoring
+- Promptfoo configs provide deterministic scenario-level assertions derived from Golden Set expectations.
+- DeepEval tests provide Python/pytest-style evaluation skeletons and future metric-oriented checks derived from Golden Set cases.
+- Review gates inspect Golden Set quality, overfitting risk, scope creep, and unsafe tool permission expansion.
+- CI smoke evaluation is planned for a later Phase 2 package and is not implemented by this package.
 
-Promptfoo execution and DeepEval execution are not implemented by the current Golden Set files.
+Promptfoo execution is local-first configuration work, and DeepEval live scoring is optional or later work. The Golden Set files themselves do not implement production observability, marketplace behavior, self-improvement automation, or automatic skill patching.
 
 ## Format
 

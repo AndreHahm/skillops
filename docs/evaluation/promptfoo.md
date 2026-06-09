@@ -1,6 +1,6 @@
 # Promptfoo Evaluation Configs
 
-SkillOps uses Promptfoo in Phase 2 Package 3 as a local-first configuration and smoke-evaluation layer for the five core skills. The current integration checks configuration mechanics and Golden Set alignment with deterministic assertions; it does not add a CI evaluation gate or external model calls.
+SkillOps uses Promptfoo in Phase 2 as a local-first configuration layer for the five core skills. Promptfoo configs provide deterministic scenario-level assertions derived from Golden Sets; this package does not add a CI evaluation gate or external model calls.
 
 ## Implemented Now
 
@@ -12,10 +12,11 @@ SkillOps uses Promptfoo in Phase 2 Package 3 as a local-first configuration and 
 
 ## Planned Later
 
-- CI evaluation gate
-- Richer judge-based scoring
-- Production observability
-- Langfuse/Phoenix tracing
+- CI evaluation gate in a later Phase 2 package; not implemented by this package
+- Richer judge-based scoring; not mandatory in this package
+- Production observability in Phase 4; not implemented in Phase 2
+- Langfuse integration and Phoenix integration in later observability work; not implemented in Phase 2
+- Marketplace behavior in Phase 5 and self-improvement automation in Phase 6; not implemented in Phase 2
 
 ## File Locations
 
@@ -50,7 +51,7 @@ The repository tests validate the YAML structure and references without requirin
 
 ## Updating Tests When Golden Sets Change
 
-When a Golden Set case is added or changed:
+In Skill-TDD, update the eval case first. When a Golden Set case is added or changed:
 
 1. Keep the Golden Set as the canonical scenario source.
 2. Add or update the matching Promptfoo test in the skill-specific config.
