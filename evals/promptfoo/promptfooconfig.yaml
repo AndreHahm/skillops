@@ -1,0 +1,75 @@
+description: SkillOps root Promptfoo smoke config for local deterministic config checks.
+prompts:
+  - "SkillOps Promptfoo root smoke for {{skill_id}}. Skill config: {{promptfoo_config}}"
+providers:
+  - id: echo
+    label: local-echo
+defaultTest:
+  metadata:
+    suite: skillops-promptfoo-root-smoke
+    execution_mode: local-deterministic
+tests:
+  - description: Root smoke references python-project-setup skill config
+    vars:
+      skill_id: python-project-setup
+      promptfoo_config: evals/promptfoo/skills/python-project-setup.promptfooconfig.yaml
+    assert:
+      - type: contains
+        value: SkillOps Promptfoo root smoke
+      - type: contains
+        value: python-project-setup
+    metadata:
+      skill_id: python-project-setup
+      category: root_smoke
+
+  - description: Root smoke references skill-manifest-authoring skill config
+    vars:
+      skill_id: skill-manifest-authoring
+      promptfoo_config: evals/promptfoo/skills/skill-manifest-authoring.promptfooconfig.yaml
+    assert:
+      - type: contains
+        value: SkillOps Promptfoo root smoke
+      - type: contains
+        value: skill-manifest-authoring
+    metadata:
+      skill_id: skill-manifest-authoring
+      category: root_smoke
+
+  - description: Root smoke references skill-registry-maintenance skill config
+    vars:
+      skill_id: skill-registry-maintenance
+      promptfoo_config: evals/promptfoo/skills/skill-registry-maintenance.promptfooconfig.yaml
+    assert:
+      - type: contains
+        value: SkillOps Promptfoo root smoke
+      - type: contains
+        value: skill-registry-maintenance
+    metadata:
+      skill_id: skill-registry-maintenance
+      category: root_smoke
+
+  - description: Root smoke references skill-health-review skill config
+    vars:
+      skill_id: skill-health-review
+      promptfoo_config: evals/promptfoo/skills/skill-health-review.promptfooconfig.yaml
+    assert:
+      - type: contains
+        value: SkillOps Promptfoo root smoke
+      - type: contains
+        value: skill-health-review
+    metadata:
+      skill_id: skill-health-review
+      category: root_smoke
+
+  - description: Root smoke references documentation-maintenance skill config
+    vars:
+      skill_id: documentation-maintenance
+      promptfoo_config: evals/promptfoo/skills/documentation-maintenance.promptfooconfig.yaml
+    assert:
+      - type: contains
+        value: SkillOps Promptfoo root smoke
+      - type: contains
+        value: documentation-maintenance
+    metadata:
+      skill_id: documentation-maintenance
+      category: root_smoke

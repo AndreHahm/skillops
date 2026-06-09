@@ -1,18 +1,18 @@
 # Skill-TDD
 
-Skill-TDD is the planned practice of designing representative skill behavior scenarios before changing a skill. Phase 2 Package 1 only provides the metadata foundation for that practice.
+Skill-TDD is the planned practice of designing representative skill behavior scenarios before changing a skill. Phase 2 now provides Golden Sets plus local-first Promptfoo configuration for deterministic smoke checks.
 
 Implemented now:
 
-- initial golden sets for the five Phase 1 core skills
+- golden sets for the five Phase 1 core skills
 - schemas that make golden sets and eval suites reviewable
-- tests that check consistency between skill IDs, golden set files, and eval suite entries
+- Promptfoo configs that map Golden Set expectations to deterministic assertions
+- tests that check consistency between skill IDs, golden set files, Promptfoo configs, and eval suite entries
 
 Planned later, and not implemented here:
 
-- Promptfoo execution
 - DeepEval execution
-- CI smoke evaluation command
-- richer pass/fail reporting for skill behavior
+- mandatory CI smoke evaluation gate
+- richer judge-based pass/fail reporting for skill behavior
 
-Until those later packages exist, reviewers should treat golden sets as static acceptance scenarios, not as executed evaluation results.
+Reviewers should treat Golden Sets as canonical acceptance scenarios and Promptfoo configs as local smoke assets, not as proof of production behavior.
