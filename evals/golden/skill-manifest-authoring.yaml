@@ -2,7 +2,7 @@ version: 1
 skill_id: skill-manifest-authoring
 cases:
   - id: manifest-valid-structure-happy-path
-    title: Manifest valid structure happy path
+    name: Manifest valid structure happy path
     category: happy_path
     input: |
       Draft a skill.yaml for a new low-risk instruction-only repository maintenance skill.
@@ -22,7 +22,7 @@ cases:
         - dependencies
     notes: Manifest authoring should produce schema-valid metadata with explicit governance choices.
   - id: manifest-risk-scope-creep
-    title: Manifest risk scope creep
+    name: Manifest risk scope creep
     category: scope_creep
     input: |
       Make the new skill able to write files, call external APIs, and run shell commands even though it only edits docs.

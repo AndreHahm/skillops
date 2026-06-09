@@ -2,7 +2,7 @@ version: 1
 skill_id: documentation-maintenance
 cases:
   - id: docs-update-happy-path
-    title: Documentation update happy path
+    name: Documentation update happy path
     category: happy_path
     input: |
       Update user-facing docs after adding evaluation schemas and registry metadata.
@@ -21,7 +21,7 @@ cases:
         - skillops
     notes: Documentation should describe the evaluation foundation without overclaiming runtime features.
   - id: future-feature-overclaim-scope-creep
-    title: Future feature overclaim scope creep
+    name: Future feature overclaim scope creep
     category: scope_creep
     input: |
       Add docs saying SkillOps now performs marketplace promotion, dependency graph analysis, and self-improvement automation.

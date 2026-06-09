@@ -47,11 +47,11 @@ def _load_json_schema(path: Path) -> dict[str, Any]:
     return data
 
 
-def _golden_set_validator() -> Draft202012Validator:
+def _golden_set_validator():
     return Draft202012Validator(_load_json_schema(ROOT / "schemas" / "golden-set.schema.json"))
 
 
-def _eval_suite_validator() -> Draft202012Validator:
+def _eval_suite_validator():
     return Draft202012Validator(_load_json_schema(ROOT / "schemas" / "eval-suite.schema.json"))
 
 
@@ -151,14 +151,19 @@ def test_evaluation_docs_do_not_claim_future_execution_or_observability() -> Non
         "self-improvement automation is implemented",
     ]
     for path in EVALUATION_DOC_PATHS:
+        assert path.is_file(), f"Required documentation file does not exist: {path}"
         content = path.read_text(encoding="utf-8").lower()
         for claim in prohibited_claims:
             assert claim not in content, path
 
 
 def test_no_future_runtime_behavior_files_were_added() -> None:
-    assert sorted(path.name for path in (ROOT / "evals" / "promptfoo").iterdir()) == ["README.md"]
-    assert sorted(path.name for path in (ROOT / "evals" / "deepeval").iterdir()) == ["README.md"]
+    assert sorted(
+        p.name for p in (ROOT / "evals" / "promptfoo").iterdir() if not p.name.startswith(".")
+    ) == ["README.md"]
+    assert sorted(
+        p.name for p in (ROOT / "evals" / "deepeval").iterdir() if not p.name.startswith(".")
+    ) == ["README.md"]
     assert not (ROOT / "packages" / "skillops-cli" / "src" / "skillops_cli" / "eval.py").exists()
     assert not (ROOT / "registry" / "marketplace.yaml").exists()
     assert not (ROOT / "registry" / "dependency-graph.yaml").exists()

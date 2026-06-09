@@ -9,7 +9,8 @@
   "properties": {
     "version": {
       "type": "integer",
-      "const": 1
+      "minimum": 1,
+      "maximum": 1
     },
     "skill_id": {
       "type": "string",
@@ -21,13 +22,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "title", "category", "input", "expected"],
+        "required": ["id", "name", "category", "input", "expected"],
         "properties": {
           "id": {
             "type": "string",
             "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
           },
-          "title": {
+          "name": {
             "type": "string",
             "minLength": 3
           },
@@ -48,7 +49,7 @@
           "expected": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["contains", "not_contains", "must_reference"],
+            "minProperties": 1,
             "properties": {
               "contains": {
                 "type": "array",

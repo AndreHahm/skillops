@@ -2,7 +2,7 @@ version: 1
 skill_id: skill-health-review
 cases:
   - id: health-findings-happy-path
-    title: Health findings happy path
+    name: Health findings happy path
     category: happy_path
     input: |
       Review a health report with one validation error, two warnings, and several informational findings.
@@ -21,7 +21,7 @@ cases:
         - reports/health/health-report.md
     notes: Health review should preserve severity distinctions while recommending concrete next steps.
   - id: phase-one-limitation-edge-case
-    title: Phase 1 limitation edge case
+    name: Phase 1 limitation edge case
     category: edge_case
     input: |
       A user asks the health review skill to score Promptfoo, DeepEval, and production observability results.
