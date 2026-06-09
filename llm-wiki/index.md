@@ -17,7 +17,7 @@ The LLM-Wiki is not a place for raw logs, temporary task notes, trace data, one-
 
 ## Main Sections
 
-- `concepts/`: durable definitions of SkillOps concepts.
+- `concepts/`: durable definitions of SkillOps concepts, including evaluation and Skill-TDD.
 - `decisions/`: ADRs and other durable decisions.
 - `glossary/`: concise term definitions.
 - `playbooks/`: repeatable operating procedures.

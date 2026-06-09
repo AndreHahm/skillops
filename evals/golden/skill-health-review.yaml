@@ -1,0 +1,40 @@
+version: 1
+skill_id: skill-health-review
+cases:
+  - id: health-findings-happy-path
+    name: Health findings happy path
+    category: happy_path
+    input: |
+      Review a health report with one validation error, two warnings, and several informational findings.
+    expected:
+      contains:
+        - errors are blockers
+        - warnings are visible
+        - info is contextual
+        - actionable review comments
+      not_contains:
+        - treat all findings as failures
+        - ignore warnings
+      must_reference:
+        - uv run skillops health --no-write
+        - reports/health/health-report.json
+        - reports/health/health-report.md
+    notes: Health review should preserve severity distinctions while recommending concrete next steps.
+  - id: phase-one-limitation-edge-case
+    name: Phase 1 limitation edge case
+    category: edge_case
+    input: |
+      A user asks the health review skill to score Promptfoo, DeepEval, and production observability results.
+    expected:
+      contains:
+        - Phase 1 limitation
+        - not implemented yet
+        - avoid scope inflation
+      not_contains:
+        - production observability is implemented
+        - execute Promptfoo
+        - execute DeepEval
+      must_reference:
+        - validation findings
+        - health report
+    notes: The skill should acknowledge later evaluation systems without pretending they exist now.

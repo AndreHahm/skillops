@@ -2,9 +2,9 @@
 
 ## What is SkillOps?
 
-SkillOps is a governance and maintenance approach for agent skill repositories. The `skillops` repository provides a Phase 1 control plane foundation for skills, manifests, registries, validation, health reporting, documentation, and agent setup.
+SkillOps is a governance and maintenance approach for agent skill repositories. The `skillops` repository provides a control plane foundation for skills, manifests, registries, validation, health reporting, documentation, agent setup, and initial evaluation metadata.
 
-SkillOps treats agent-facing skill repositories like package ecosystems instead of loose prompt folders. Phase 1 focuses on local repository structure and validation. Later phases may extend the foundation with evaluation systems and marketplace mechanics, but those extensions are not implemented yet.
+SkillOps treats agent-facing skill repositories like package ecosystems instead of loose prompt folders. Phase 1 focused on local repository structure and validation. Phase 2 Package 1 adds an evaluation foundation with schemas, golden sets, and suite metadata, while Promptfoo execution, DeepEval execution, marketplace mechanics, production observability, dependency graph behavior, and self-improvement automation remain planned later or not implemented.
 
 ## Why this project exists
 
@@ -25,9 +25,11 @@ Phase 1 focuses on:
 - Claude Code and Codex agent setup files;
 - documentation and LLM-Wiki foundations.
 
+Phase 2 Package 1 adds a metadata-only evaluation foundation. It does not implement Promptfoo execution, DeepEval execution, production observability, dependency graph behavior, marketplace behavior, or self-improvement automation.
+
 ## What is implemented now
 
-The Phase 1 foundation currently includes:
+The implemented foundation currently includes:
 
 - the `skill.yaml` JSON Schema in `schemas/skill.schema.json`;
 - the canonical skill registry at `registry/skills.yaml`;
@@ -41,11 +43,14 @@ The Phase 1 foundation currently includes:
 - Claude Code and Codex setup files;
 - local hook examples and disabled MCP example configs;
 - a MkDocs-compatible `docs/` structure;
-- an `llm-wiki/` structure for durable concepts, ADRs, glossary entries, and playbooks.
+- an `llm-wiki/` structure for durable concepts, ADRs, glossary entries, and playbooks;
+- the `schemas/golden-set.schema.json` and `schemas/eval-suite.schema.json` evaluation schemas;
+- initial golden sets under `evals/golden/`;
+- the planned eval suite registry at `registry/eval-suites.yaml`.
 
 ## What is intentionally not implemented yet
 
-Phase 1 does not implement these later capabilities:
+The repository does not implement these later capabilities yet:
 
 - not implemented yet: full marketplace mechanics;
 - not implemented yet: dependency graph generation;
@@ -64,9 +69,10 @@ Phase 1 does not implement these later capabilities:
 | --- | --- |
 | `packages/skillops-core` | Reusable validation, loading, structured model, and health logic. |
 | `packages/skillops-cli` | Typer-based `skillops` command-line interface. |
-| `schemas` | JSON Schemas for skill manifests and related registry files. |
-| `registry` | Canonical Phase 1 registry files, including `registry/skills.yaml`. |
-| `skills` | Canonical Phase 1 core skill folders with `SKILL.md` and `skill.yaml`. |
+| `schemas` | JSON Schemas for skill manifests, registries, golden sets, and eval suites. |
+| `registry` | Canonical registry files, including `registry/skills.yaml` and `registry/eval-suites.yaml`. |
+| `skills` | Canonical core skill folders with `SKILL.md` and `skill.yaml`. |
+| `evals` | Static evaluation foundation metadata, including golden sets and placeholders for later Promptfoo and DeepEval integrations. |
 | `docs` | Human-facing project documentation prepared for MkDocs. |
 | `llm-wiki` | Durable conceptual knowledge, ADRs, glossary entries, and playbooks. |
 | `hooks` | Safe local hook examples and shared hook utilities. |
@@ -113,6 +119,8 @@ uv run skillops inspect skill-registry-maintenance
 - **Skill manifest**: the machine-readable `skill.yaml` metadata file for a skill.
 - **Registry**: the canonical machine-readable index of known skills, currently `registry/skills.yaml`.
 - **Health report**: a generated summary of Phase 1 validation and hygiene findings.
+- **Golden set**: a static set of representative skill behavior scenarios used as evaluation seed data.
+- **Eval suite registry**: planned suite metadata that maps core skills to golden sets without executing evaluation engines.
 - **Agent setup**: repository files that orient Claude Code, Codex, hooks, and MCP examples.
 - **LLM-Wiki**: durable conceptual knowledge for agents and maintainers, separate from task logs or temporary notes.
 
@@ -141,14 +149,14 @@ Hook and MCP files are examples only in Phase 1. They do not include real creden
 
 ## Documentation and LLM-Wiki
 
-- `docs/` contains human-facing project documentation, including architecture, governance, skill authoring, and roadmap pages.
+- `docs/` contains human-facing project documentation, including architecture, governance, skill authoring, evaluation, and roadmap pages.
 - `llm-wiki/` contains durable conceptual knowledge, architecture decisions, glossary definitions, and operational playbooks for agents and maintainers.
 
 Start with `docs/index.md` for project documentation and `llm-wiki/index.md` for durable agent knowledge.
 
 ## Roadmap
 
-Phase 1 Foundation establishes the repository, schemas, registry, core library, CLI MVP, core skills, agent setup, docs, and LLM-Wiki. Later phases may add deeper validation and evaluation, codebase research support, dependency graph generation, observability integrations, marketplace mechanics, a self-improvement loop, and CI or release finalization.
+Phase 1 Foundation establishes the repository, schemas, registry, core library, CLI MVP, core skills, agent setup, docs, and LLM-Wiki. Phase 2 Package 1 establishes static evaluation schemas, golden sets, and planned eval suite metadata. Later phases may add Promptfoo execution, DeepEval execution, codebase research support, dependency graph generation, observability integrations, marketplace mechanics, a self-improvement loop, and CI or release finalization.
 
 Future roadmap items are planned extension areas, not current implemented behavior.
 
