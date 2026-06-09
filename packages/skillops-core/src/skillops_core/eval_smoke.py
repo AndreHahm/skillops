@@ -13,6 +13,7 @@ from jsonschema import Draft202012Validator
 from jsonschema import exceptions as jsonschema_exceptions
 
 from skillops_core.constants import DEFAULT_SKILLS_REGISTRY_PATH
+from skillops_core.errors import SkillOpsFileNotFoundError, SkillOpsValidationError
 from skillops_core.loaders import load_yaml
 from skillops_core.models import ValidationReport
 from skillops_core.validation import REQUIRED_CORE_SKILL_IDS
@@ -59,6 +60,7 @@ SECRET_PATTERNS = [
     re.compile(r"xox[baprs]-[a-z0-9-]{20,}", re.IGNORECASE),
     re.compile(r"aws_secret_access_key\s*=\s*['\"]?[a-z0-9/+=]{20,}", re.IGNORECASE),
 ]
+# noinspection RegExpUnnecessaryNonCapturingGroup
 LOCAL_USER_PATH_PATTERN = re.compile(
     r"(?:[A-Za-z]:\\Users\\[A-Za-z0-9._\- ]+|/(?:Users|home)/[A-Za-z0-9._-]+)"
 )
@@ -149,6 +151,7 @@ def _load_json_schema(
 def _load_yaml_mapping(
     path: Path, repo_root: Path, result: EvaluationSmokeResult
 ) -> dict[str, Any] | None:
+    invalid_yaml = "eval_smoke.invalid_yaml"
     display_path = _display_path(path, repo_root)
     if not path.exists():
         result.report.add_error(
@@ -156,18 +159,19 @@ def _load_yaml_mapping(
         )
         return None
     try:
-        return load_yaml(path)
-    except Exception as exc:
+        data = load_yaml(path)
+    except (SkillOpsValidationError, SkillOpsFileNotFoundError) as exc:
         result.report.add_error(
-            "eval_smoke.invalid_yaml",
+            invalid_yaml,
             f"YAML file is not parseable as a mapping: {exc}",
             display_path,
         )
         return None
+    return data
 
 
 def _validate_instance(
-    validator: Draft202012Validator,
+    validator,
     instance: dict[str, Any],
     path: Path,
     repo_root: Path,
@@ -186,7 +190,7 @@ def _validate_instance(
 def _validate_golden_sets(
     repo_root: Path,
     result: EvaluationSmokeResult,
-    golden_validator: Draft202012Validator,
+    golden_validator,
 ) -> dict[str, Path]:
     golden_sets: dict[str, Path] = {}
     golden_dir = repo_root / GOLDEN_SET_DIR
@@ -212,7 +216,15 @@ def _validate_golden_sets(
         )
         skill_id = data.get("skill_id")
         if isinstance(skill_id, str):
-            golden_sets[skill_id] = path
+            if skill_id in golden_sets:
+                result.report.add_error(
+                    "eval_smoke.duplicate_golden_set_skill_id",
+                    f"Duplicate skill_id in golden sets: {skill_id}",
+                    _display_path(path, repo_root),
+                    skill_id,
+                )
+            else:
+                golden_sets[skill_id] = path
         result.golden_sets_checked += 1
     return golden_sets
 
@@ -260,7 +272,7 @@ def _validate_deepeval_file(path: Path, repo_root: Path, result: EvaluationSmoke
 def _validate_eval_suite_registry(
     repo_root: Path,
     result: EvaluationSmokeResult,
-    eval_suite_validator: Draft202012Validator,
+    eval_suite_validator,
     golden_sets_by_skill_id: dict[str, Path],
 ) -> None:
     registry_path = repo_root / EVAL_SUITE_REGISTRY_PATH
@@ -300,21 +312,23 @@ def _validate_eval_suite_registry(
                     str(EVAL_SUITE_REGISTRY_PATH),
                     skill_id if isinstance(skill_id, str) else None,
                 )
-            golden_path = _repo_path(repo_root, golden_set)
-            if not golden_path.exists():
-                result.report.add_error(
-                    "eval_smoke.golden_set_missing",
-                    f"Referenced Golden Set is missing: {golden_set}",
-                    str(EVAL_SUITE_REGISTRY_PATH),
-                    skill_id if isinstance(skill_id, str) else None,
-                )
-            elif isinstance(skill_id, str) and golden_sets_by_skill_id.get(skill_id) != golden_path:
-                result.report.add_error(
-                    "eval_smoke.golden_set_skill_mismatch",
-                    f"Eval suite Golden Set does not align with skill_id: {golden_set}",
-                    str(EVAL_SUITE_REGISTRY_PATH),
-                    skill_id,
-                )
+            else:
+                golden_path = _repo_path(repo_root, golden_set)
+                if not golden_path.exists():
+                    result.report.add_error(
+                        "eval_smoke.golden_set_missing",
+                        f"Referenced Golden Set is missing: {golden_set}",
+                        str(EVAL_SUITE_REGISTRY_PATH),
+                        skill_id if isinstance(skill_id, str) else None,
+                    )
+                elif (isinstance(skill_id, str) and
+                      golden_sets_by_skill_id.get(skill_id) != golden_path):
+                    result.report.add_error(
+                        "eval_smoke.golden_set_skill_mismatch",
+                        f"Eval suite Golden Set does not align with skill_id: {golden_set}",
+                        str(EVAL_SUITE_REGISTRY_PATH),
+                        skill_id,
+                    )
 
         promptfoo_config = suite.get("promptfoo_config")
         if isinstance(promptfoo_config, str):
@@ -325,10 +339,11 @@ def _validate_eval_suite_registry(
                     str(EVAL_SUITE_REGISTRY_PATH),
                     skill_id if isinstance(skill_id, str) else None,
                 )
-            promptfoo_path = _repo_path(repo_root, promptfoo_config)
-            if promptfoo_path not in seen_promptfoo_configs:
-                seen_promptfoo_configs.add(promptfoo_path)
-                _validate_promptfoo_config(promptfoo_path, repo_root, result)
+            else:
+                promptfoo_path = _repo_path(repo_root, promptfoo_config)
+                if promptfoo_path not in seen_promptfoo_configs:
+                    seen_promptfoo_configs.add(promptfoo_path)
+                    _validate_promptfoo_config(promptfoo_path, repo_root, result)
 
         deepeval_tests = suite.get("deepeval_tests")
         if isinstance(deepeval_tests, list):
@@ -342,10 +357,11 @@ def _validate_eval_suite_registry(
                         str(EVAL_SUITE_REGISTRY_PATH),
                         skill_id if isinstance(skill_id, str) else None,
                     )
-                deepeval_path = _repo_path(repo_root, deepeval_test)
-                if deepeval_path not in seen_deepeval_files:
-                    seen_deepeval_files.add(deepeval_path)
-                    _validate_deepeval_file(deepeval_path, repo_root, result)
+                else:
+                    deepeval_path = _repo_path(repo_root, deepeval_test)
+                    if deepeval_path not in seen_deepeval_files:
+                        seen_deepeval_files.add(deepeval_path)
+                        _validate_deepeval_file(deepeval_path, repo_root, result)
 
     for core_skill_id in sorted(REQUIRED_CORE_SKILL_IDS):
         count = suite_counts.get(core_skill_id, 0)
@@ -386,7 +402,15 @@ def _validate_docs(repo_root: Path, result: EvaluationSmokeResult) -> None:
                 str(relative_path),
             )
             continue
-        content = path.read_text(encoding="utf-8").lower()
+        try:
+            content = path.read_text(encoding="utf-8").lower()
+        except (OSError, UnicodeDecodeError) as exc:
+            result.report.add_error(
+                "eval_smoke.doc_read_error",
+                f"Failed to read evaluation documentation: {exc}",
+                str(relative_path),
+            )
+            continue
         for claim in FORBIDDEN_DOC_CLAIMS:
             if claim in content:
                 result.report.add_error(
