@@ -1,9 +1,22 @@
 # Skill-TDD
 
-Skill-TDD is the SkillOps workflow of writing or updating representative skill behavior scenarios before changing a skill implementation.
+Skill-TDD is the SkillOps concept of changing agent skills test-first: define the behavioral scenario before changing the skill instructions, then use validation, scenario evaluation assets, review, and regression protection to keep the behavior stable.
 
-The current Phase 2 assets support Skill-TDD through Golden Sets, planned-safe Promptfoo smoke configuration, and planned-safe DeepEval skeletons before future evaluation gates are introduced.
+The durable workflow is:
 
-Current local practice is to define Golden Set cases for expected skill behavior, keep case categories explicit, connect each core skill to one draft eval suite, map Golden Set expectations to deterministic Promptfoo assertions with broader execution planned later, load Golden Sets from DeepEval pytest skeletons with judge scoring planned later, and validate that files and references are consistent.
+```text
+eval case first
+  -> skill update
+  -> local validation
+  -> scenario eval
+  -> review
+  -> regression protection
+```
 
-DeepEval-dependent imports are guarded by `SKILLOPS_RUN_DEEPEVAL=1`, and baseline repository tests do not require model credentials. Mandatory CI smoke evaluation gates, richer automated Skill-TDD reporting, and LLM-as-judge score thresholds are planned for later Phase 2 packages.
+Golden Sets prevent evaluation debt because they preserve the behavioral reason for a skill change as canonical scenario assets. Without Golden Sets, maintainers may remember that a regression was fixed but lose the concrete scenario that future agents should continue to satisfy.
+
+Promptfoo configs provide deterministic scenario-level assertions for local-first review. DeepEval tests provide Python/pytest-style evaluation skeletons and future metric-oriented checks. Both layers should derive from Golden Sets rather than becoming separate sources of truth.
+
+Review gates are necessary because deterministic checks can be gamed and LLM-as-judge should not be treated as absolute truth. A reviewer must still inspect overfitting, scope creep, unsafe tool permission expansion, documentation drift, and whether the change remains useful for real agents.
+
+Future observability and future self-improvement automation must be review-gated. Production observability is planned for Phase 4 and is not implemented in Phase 2. Marketplace behavior is planned for Phase 5 and is not implemented in Phase 2. Self-improvement automation and automatic skill patching are planned for Phase 6 and are not implemented in Phase 2. Langfuse integration, Phoenix integration, production traces, dependency graph analysis, and mandatory CI evaluation gates are not active behavior in this package.

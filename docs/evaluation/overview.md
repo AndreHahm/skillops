@@ -1,28 +1,46 @@
 # Evaluation Foundation Overview
 
-SkillOps Phase 2 establishes structured evaluation assets for skills. The current foundation makes skill behavior reviewable through schemas, expanded Golden Sets, an eval suite registry, local-first Promptfoo configuration files, and guarded DeepEval pytest skeletons.
+SkillOps Phase 2 establishes structured, local-first evaluation assets for skills. The model is layered: validate files, define canonical scenarios, map deterministic assertions, keep Python/pytest-style skeletons, and use review gates before any later CI smoke gate.
 
-Implemented now:
+## Phase 2 Evaluation Layers
 
-- evaluation directory structure under `evals/`
-- `schemas/golden-set.schema.json`
-- expanded scenario-based Golden Sets for the five Phase 1 core skills
-- `schemas/eval-suite.schema.json`
-- `registry/eval-suites.yaml`
-- Promptfoo configuration files for local deterministic smoke checks
-- DeepEval test skeletons and helper utilities for local pytest-style checks
-- deterministic consistency tests for schemas, Golden Set completeness, required categories, Promptfoo config references, DeepEval references, safety drift, and documentation claims
+| Layer | Status | Notes |
+| --- | --- | --- |
+| Static validation | Implemented in Phase 1 | Existing schema, registry, CLI validation, and health checks. |
+| Golden Scenario Tests | Implemented in Phase 2 | Golden Sets are canonical scenario assets for the five Phase 1 core skills. |
+| Promptfoo configuration | Implemented in Phase 2 | Promptfoo configs provide deterministic scenario-level assertions for local-first review. |
+| DeepEval test skeletons | Implemented in Phase 2 | DeepEval tests provide Python/pytest-style evaluation skeletons and future metric-oriented checks. |
+| Review Gate | Documented in Phase 2 Package 5 | Reviewers inspect coverage, overfitting, scope creep, unsafe tool permission expansion, and documentation accuracy. |
+| CI smoke gate | Planned for Phase 2 Package 6 | Not implemented by this package. |
+| Production observability | Planned for Phase 4 | Not implemented in Phase 2; production traces, Langfuse integration, and Phoenix integration are not active behavior. |
+| Marketplace behavior | Planned for Phase 5 | Not implemented in Phase 2. |
+| Self-improvement automation | Planned for Phase 6 | Not implemented in Phase 2; automatic skill patching is not active behavior. |
 
-Implemented earlier:
+## Skill-TDD Flow
 
-- Golden Sets
-- Promptfoo configuration
+SkillOps uses Skill-TDD for skill changes:
 
-Planned later, and not active behavior here:
+```text
+eval case first
+  -> skill update
+  -> local validation
+  -> scenario eval
+  -> review
+  -> regression protection
+```
 
-- mandatory CI evaluation gate
-- richer Promptfoo and DeepEval-backed Skill-TDD reporting
-- LLM-as-judge scoring that is explicitly credentialed and flake-managed
-- production observability, Langfuse/Phoenix tracing, dependency graph behavior, marketplace behavior, release automation, deployment automation, and self-improvement candidate generation
+See [Skill-TDD](skill-tdd.md) for the contributor workflow and [Review Gates](review-gates.md) for review criteria.
 
-The strategic shift is from file-only validity toward behavior-aware validation. Golden Sets remain the canonical scenario source. Promptfoo provides declarative smoke/regression configuration, while DeepEval provides Python and pytest-style skeletons that can later receive captured system outputs. Repository tests remain structural and offline by default.
+## How the Assets Work Together
+
+- [Golden Sets](golden-sets.md) capture canonical scenarios and expected response traits.
+- [Promptfoo configs](promptfoo.md) map those scenarios into deterministic config-level assertions.
+- [DeepEval skeletons](deepeval.md) load Golden Sets from Python tests and keep optional metric-oriented checks guarded.
+- `registry/eval-suites.yaml` links each core skill to its Golden Set, Promptfoo config, and DeepEval test file.
+- `evals/README.md` describes the evaluation asset directory and links to runner-specific READMEs.
+
+Repository tests remain structural and offline by default. They verify schemas, references, deterministic assertion alignment, documentation claims, and safety boundaries. They do not require external services, cloud login, production telemetry, or live model scoring.
+
+## Boundaries
+
+This package does not add a `skillops eval` CLI platform, CI evaluation gate, production observability, online evaluation, trace ingestion, dependency graph analysis, marketplace behavior, self-improvement automation, automatic skill patching, release automation, deployment automation, database support, scheduled workflows, or a web UI.
