@@ -113,11 +113,10 @@ def test_promptfoo_assertions_are_deterministic_and_derived_from_golden_sets() -
             assert test.get("assert"), test["description"]
             assert {assertion["type"] for assertion in test["assert"]} <= deterministic_types
             golden_case = golden_cases[test["metadata"]["golden_case_id"]]
-            expected_contains = golden_case["expected"].get("contains", [])
-            expected_not_contains = golden_case["expected"].get("not_contains", [])
+            expected_contains = golden_case["expected"].get("contains") or []
+            expected_not_contains = golden_case["expected"].get("not_contains") or []
             assert _assertions(test, "contains") == expected_contains
-            if expected_not_contains:
-                assert _assertions(test, "not-contains") == expected_not_contains
+            assert _assertions(test, "not-contains") == expected_not_contains
 
 
 def test_registry_references_existing_promptfoo_configs_and_no_deepeval_files() -> None:
@@ -146,7 +145,7 @@ def test_promptfoo_configs_and_docs_do_not_commit_secrets_or_local_paths() -> No
     local_path_patterns = [
         re.compile(r"/Users/[A-Za-z0-9._-]+"),
         re.compile(r"/home/[A-Za-z0-9._-]+"),
-        re.compile(r"C:\\\\Users\\\\[A-Za-z0-9._-]+"),
+        re.compile(r"C:\\Users\\[A-Za-z0-9._-]+"),
     ]
     for path in files:
         content = path.read_text(encoding="utf-8")
