@@ -2,7 +2,7 @@
 
 Review gates are the human and agent review layer in Skill-TDD. They decide whether a skill change is ready after the eval case first, skill update, local validation, and scenario eval steps are complete.
 
-Review gates are required because deterministic checks can confirm structure and key phrases, but they cannot fully prove intent, safety, scope discipline, or resistance to overfitting. In Phase 2, review gates are documented process gates backed by structural tests; this package does not implement a mandatory CI evaluation gate.
+Review gates are required because deterministic checks can confirm structure and key phrases, but they cannot fully prove intent, safety, scope discipline, or resistance to overfitting. In Phase 2, review gates are documented process gates backed by structural tests; this package implements only the deterministic CI smoke gate, not a full/live CI evaluation gate.
 
 ## What Reviewers Should Inspect
 

@@ -134,7 +134,7 @@ Skill-TDD flow:
 
 Do not use Skill-TDD work to add new runtime evaluation platforms, full benchmark CI eval gates, production observability, dependency graph generation, marketplace behavior, self-improvement automation, automatic skill patching, release automation, deployment automation, or web UI behavior.
 
-Do not claim implemented status for Langfuse, Phoenix, production traces, marketplace promotion, automatic patching, or mandatory CI evaluation gates. Those capabilities are later-phase work unless a future package explicitly implements them.
+Do not claim implemented status for Langfuse, Phoenix, production traces, marketplace promotion, automatic patching, or mandatory full/live CI evaluation gates. Those capabilities are later-phase work unless a future package explicitly implements them; the Phase 2 smoke gate remains deterministic and offline.
 
 
 ## Evaluation Smoke Gate in Skill-TDD

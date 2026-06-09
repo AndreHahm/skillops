@@ -14,7 +14,7 @@ cases:
         - "Ruff"
         - "test-first"
       not_contains:
-        - "Python 3.12"
+        - "Python <3.13"
         - "pipenv"
         - "Django"
       must_reference:
@@ -37,7 +37,7 @@ cases:
       not_contains:
         - "replace the entire pyproject.toml"
         - "install a framework by default"
-        - "Python 3.12"
+        - "Python <3.13"
       must_reference:
         - "pyproject.toml"
         - "tests/"
@@ -57,7 +57,7 @@ cases:
       not_contains:
         - "choose a web framework without confirmation"
         - "add every common dependency"
-        - "Python 3.12"
+        - "Python <3.13"
       must_reference:
         - "project type"
         - "dependency constraints"
