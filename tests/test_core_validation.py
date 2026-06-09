@@ -100,7 +100,9 @@ def test_validate_skills_registry_detects_missing_required_core_skill(tmp_path: 
     repo = _copy_current_repo_registry_and_skills(tmp_path)
     registry_path = repo / "registry" / "skills.yaml"
     registry = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
-    registry["skills"] = registry["skills"][:-1]
+    registry["skills"] = [
+        entry for entry in registry["skills"] if entry["id"] != "python-project-setup"
+    ]
     _write_yaml(registry_path, registry)
 
     report = validate_skills_registry(repo)

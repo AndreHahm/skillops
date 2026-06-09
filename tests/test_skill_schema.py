@@ -15,6 +15,7 @@ CORE_SKILL_MANIFESTS = [
     ROOT / "skills" / "skill-registry-maintenance" / "skill.yaml",
     ROOT / "skills" / "skill-health-review" / "skill.yaml",
     ROOT / "skills" / "documentation-maintenance" / "skill.yaml",
+    ROOT / "skills" / "codebase-research" / "skill.yaml",
 ]
 
 

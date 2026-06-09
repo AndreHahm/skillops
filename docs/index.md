@@ -8,7 +8,7 @@ description: skillops Documentation
 
 `skillops` is the foundation for managing agent skill repositories with schemas, manifests, canonical registries, validation, health reporting, core skills, agent setup, documentation, and initial evaluation metadata.
 
-The project remains intentionally small. Phase 2 Package 1 establishes static evaluation schemas, golden sets, and suite metadata, while Promptfoo execution, DeepEval execution, marketplace workflows, dependency graph generation, production observability integrations, and release automation are planned later or not implemented.
+The project remains intentionally small. Phase 2 establishes static evaluation schemas, golden sets, suite metadata, and local evaluation scaffolding. Phase 2a has started with a draft codebase research skill and minimal report location, while Serena, Repomix, graphify, code-review-graph, marketplace workflows, dependency graph generation, production observability integrations, and release automation are planned later or not implemented.
 
 ## Current MVP Scope
 
@@ -18,11 +18,12 @@ The current MVP scope includes:
 - `registry/skills.yaml` consistency checks;
 - a reusable `skillops-core` package;
 - a `skillops` CLI MVP with validate, health, list, and inspect commands;
-- five core skills for repository maintenance;
+- five Phase 1 core skills for repository maintenance plus the draft Phase 2a codebase research skill;
 - Claude Code and Codex setup files;
 - hook examples and disabled MCP example configs;
 - documentation and LLM-Wiki foundations;
-- metadata-only evaluation schemas, golden sets, and eval suite registry entries.
+- metadata-only evaluation schemas, golden sets, and eval suite registry entries;
+- the `codebase-research` skill and `reports/codebase-research/` location for optional research reports.
 
 Future phases are planned extension areas. They are not implemented unless explicitly described as current behavior in this repository.
 

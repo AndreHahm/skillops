@@ -44,4 +44,4 @@ def test_load_skills_registry_loads_current_registry() -> None:
     registry = load_skills_registry(ROOT / "registry" / "skills.yaml")
 
     assert registry.version == 1
-    assert len(registry.skills) == 5
+    assert len(registry.skills) == 6

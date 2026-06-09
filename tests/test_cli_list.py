@@ -16,6 +16,7 @@ CORE_SKILL_IDS = {
     "skill-registry-maintenance",
     "skill-health-review",
     "documentation-maintenance",
+    "codebase-research",
 }
 
 
