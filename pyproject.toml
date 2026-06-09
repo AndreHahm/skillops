@@ -11,7 +11,9 @@ dependencies = [
   "pyyaml>=6.0",
   "jsonschema>=4.0",
   "typer>=0.12",
-  "rich>=13.0"
+  "rich>=13.0",
+  "skillops-core",
+  "skillops-cli"
 ]
 
 [project.scripts]
@@ -37,6 +39,10 @@ pythonpath = [
   "packages/skillops-core/src",
   "packages/skillops-cli/src"
 ]
+
+[tool.uv.sources]
+skillops-core = { workspace = true }
+skillops-cli = { workspace = true }
 
 [tool.uv.workspace]
 members = [

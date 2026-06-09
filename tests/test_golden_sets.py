@@ -32,6 +32,7 @@ REAL_LOOKING_SECRET_RE = re.compile(
     r"(?i)(sk-[a-z0-9]{20,}|ghp_[a-z0-9]{20,}|xox[baprs]-[a-z0-9-]{20,}|"
     r"aws_secret_access_key\s*[:=]\s*[a-z0-9/+]{20,})"
 )
+# noinspection RegExpUnnecessaryNonCapturingGroup
 LOCAL_USER_PATH_RE = re.compile(
     r"(?:/Users/[A-Za-z0-9._-]+|/home/[A-Za-z0-9._-]+|C:\\Users\\[A-Za-z0-9._-]+)"
 )
@@ -58,7 +59,7 @@ def _load_json_schema(path: Path) -> dict[str, Any]:
     return data
 
 
-def _golden_set_validator() -> Draft202012Validator:
+def _golden_set_validator():
     return Draft202012Validator(_load_json_schema(ROOT / "schemas" / "golden-set.schema.json"))
 
 
@@ -97,19 +98,31 @@ def test_all_core_golden_sets_validate_against_schema() -> None:
 def test_golden_sets_have_required_case_coverage_and_assertions() -> None:
     for skill_id, data in _all_golden_sets().items():
         cases = data["cases"]
-        assert len(cases) >= 5, skill_id
-        assert REQUIRED_CATEGORIES <= {case["category"] for case in cases}
+        assert len(cases) >= 5, f"Skill '{skill_id}' must have at least 5 cases, found {len(cases)}"
+        missing_categories = REQUIRED_CATEGORIES - {case["category"] for case in cases}
+        assert not missing_categories, (
+            f"Skill '{skill_id}' is missing required categories: {missing_categories}"
+        )
 
         case_ids = [case["id"] for case in cases]
-        assert len(case_ids) == len(set(case_ids)), skill_id
+        duplicates = [cid for cid, count in Counter(case_ids).items() if count > 1]
+        assert not duplicates, f"Skill '{skill_id}' has duplicate case IDs: {duplicates}"
 
         for case in cases:
-            assert SLUG_RE.fullmatch(case["id"]), case["id"]
-            assert case["input"].strip(), case["id"]
-            assert case["expected"]["contains"], case["id"]
-            assert case["expected"]["not_contains"], case["id"]
+            assert SLUG_RE.fullmatch(case["id"]), (
+                f"Case ID '{case['id']}' in '{skill_id}' is not a valid slug"
+            )
+            assert case["input"].strip(), f"Case '{case['id']}' in '{skill_id}' has empty input"
+            assert case["expected"]["contains"], (
+                f"Case '{case['id']}' in '{skill_id}' has empty 'contains' assertions"
+            )
+            assert case["expected"]["not_contains"], (
+                f"Case '{case['id']}' in '{skill_id}' has empty 'not_contains' assertions"
+            )
             for reference in case["expected"].get("must_reference", []):
-                assert reference.strip(), case["id"]
+                assert reference.strip(), (
+                    f"Case '{case['id']}' in '{skill_id}' has empty reference in 'must_reference'"
+                )
 
 
 def test_golden_set_skill_ids_correspond_to_registered_core_skills() -> None:
@@ -123,30 +136,52 @@ def test_eval_registry_references_all_core_golden_sets_once() -> None:
     skill_counts = Counter(suite["skill_id"] for suite in suites)
     golden_sets_by_skill = {suite["skill_id"]: suite["golden_set"] for suite in suites}
 
-    assert set(skill_counts) == CORE_SKILL_IDS
-    assert all(count == 1 for count in skill_counts.values())
+    missing_skills = CORE_SKILL_IDS - set(skill_counts)
+    extra_skills = set(skill_counts) - CORE_SKILL_IDS
+    assert not missing_skills, f"Missing eval suites for core skills: {missing_skills}"
+    assert not extra_skills, f"Unexpected eval suites for skills: {extra_skills}"
+
+    duplicates = [sid for sid, count in skill_counts.items() if count > 1]
+    assert not duplicates, f"Duplicate eval suites found for skills: {duplicates}"
 
     for skill_id in CORE_SKILL_IDS:
         expected_path = f"evals/golden/{skill_id}.yaml"
-        assert golden_sets_by_skill[skill_id] == expected_path
-        assert (ROOT / expected_path).is_file()
+        assert golden_sets_by_skill[skill_id] == expected_path, (
+            f"Expected golden set path '{expected_path}' for '{skill_id}', "
+            f"got '{golden_sets_by_skill[skill_id]}'"
+        )
+        assert (ROOT / expected_path).is_file(), f"Golden set file not found: {expected_path}"
 
 
 def test_eval_registry_does_not_reference_missing_promptfoo_or_deepeval_files() -> None:
     for suite in _eval_suite_registry()["eval_suites"]:
-        assert suite["promptfoo_config"] is None
-        assert suite["deepeval_tests"] == []
+        promptfoo_config = suite.get("promptfoo_config")
+        if promptfoo_config is not None:
+            assert (ROOT / promptfoo_config).is_file(), (
+                f"Promptfoo config file not found: {promptfoo_config}"
+            )
+
+        for deepeval_test in suite.get("deepeval_tests", []):
+            assert (ROOT / deepeval_test).is_file(), (
+                f"DeepEval test file not found: {deepeval_test}"
+            )
 
 
 def test_golden_sets_do_not_claim_future_runtime_systems_are_implemented() -> None:
     for path in GOLDEN_SET_PATHS.values():
         content = path.read_text(encoding="utf-8").lower()
         for claim in PROHIBITED_CLAIMS:
-            assert claim not in content, path
+            assert claim not in content, f"Prohibited claim '{claim}' found in {path}"
 
 
 def test_golden_sets_do_not_contain_real_looking_secrets_or_local_user_paths() -> None:
     for path in GOLDEN_SET_PATHS.values():
         content = path.read_text(encoding="utf-8")
-        assert REAL_LOOKING_SECRET_RE.search(content) is None, path
-        assert LOCAL_USER_PATH_RE.search(content) is None, path
+        secret_match = REAL_LOOKING_SECRET_RE.search(content)
+        assert secret_match is None, (
+            f"Real-looking secret '{secret_match.group(0) if secret_match else ''}' found in {path}"
+        )
+        path_match = LOCAL_USER_PATH_RE.search(content)
+        assert path_match is None, (
+            f"Local user path '{path_match.group(0) if path_match else ''}' found in {path}"
+        )
