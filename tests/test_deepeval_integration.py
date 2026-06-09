@@ -40,9 +40,10 @@ DEEPEVAL_DOC_PATHS = [
     ROOT / "llm-wiki" / "concepts" / "skill-tdd.md",
 ]
 REAL_LOOKING_SECRET_RE = re.compile(
-    r"(?i)(sk-[a-z0-9]{20,}|ghp_[a-z0-9]{20,}|xox[baprs]-[a-z0-9-]{20,}|"
+    r"(?i)(sk-[a-z0-9_-]{20,}|ghp_[a-z0-9]{20,}|xox[baprs]-[a-z0-9-]{20,}|"
     r"aws_secret_access_key\s*[:=]\s*[a-z0-9/+]{20,})"
 )
+# noinspection RegExpUnnecessaryNonCapturingGroup
 LOCAL_USER_PATH_RE = re.compile(
     r"(?:/Users/[A-Za-z0-9._-]+|/home/[A-Za-z0-9._-]+|C:\\Users\\[A-Za-z0-9._-]+)"
 )
@@ -115,8 +116,11 @@ def test_deepeval_test_files_are_guarded_against_mandatory_external_model_calls(
         content = path.read_text(encoding="utf-8")
         assert "SKILLOPS_RUN_DEEPEVAL" in content
         assert "os.getenv" in content
-        assert "pytest.importorskip(\"deepeval\")" in content
-        assert "from deepeval" not in content.split("pytest.importorskip(\"deepeval\")")[0]
+        split_content = re.split(r"""pytest\.importorskip\(["']deepeval["']\)""", content)
+        assert len(split_content) > 1, f"Missing pytest.importorskip('deepeval') guard in {path}"
+        assert "from deepeval" not in split_content[0], (
+            f"Import from deepeval must be after the importorskip guard in {path}"
+        )
         assert "judge" in content.lower()
         for marker in PROHIBITED_NETWORK_MARKERS:
             assert marker not in content, path
