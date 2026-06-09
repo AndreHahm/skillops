@@ -72,6 +72,16 @@ def categories(golden_set: dict[str, Any]) -> set[str]:
     return {str(case.get("category")) for case in list_cases(golden_set)}
 
 
+def _coerce_list(value: Any, field: str) -> list[Any]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise TypeError(
+            f"Golden Set case expected.{field} must be a list, got {type(value).__name__}"
+        )
+    return value
+
+
 def build_expected_output_checks(case: dict[str, Any]) -> ExpectedOutputChecks:
     """Build deterministic output checks from a Golden Set case."""
 
@@ -79,9 +89,15 @@ def build_expected_output_checks(case: dict[str, Any]) -> ExpectedOutputChecks:
     if not isinstance(expected, dict):
         raise TypeError("Golden Set case expected block must be a mapping")
     return ExpectedOutputChecks(
-        contains=tuple(str(value) for value in expected.get("contains", [])),
-        not_contains=tuple(str(value) for value in expected.get("not_contains", [])),
-        must_reference=tuple(str(value) for value in expected.get("must_reference", [])),
+        contains=tuple(str(v) for v in _coerce_list(
+            expected.get("contains"), "contains"
+        )),
+        not_contains=tuple(str(v) for v in _coerce_list(
+            expected.get("not_contains"), "not_contains"
+        )),
+        must_reference=tuple(str(v) for v in _coerce_list(
+            expected.get("must_reference"), "must_reference"
+        )),
     )
 
 
@@ -103,7 +119,7 @@ def deterministic_placeholder_output(case: dict[str, Any]) -> str:
     return "\n".join((*checks.contains, *checks.must_reference))
 
 
-def to_deepeval_test_case_kwargs(case: dict[str, Any], actual_output: str) -> dict[str, str]:
+def to_deepeval_test_case_kwargs(case: dict[str, Any], actual_output: str) -> dict[str, Any]:
     """Convert a Golden Set case into keyword arguments for DeepEval LLMTestCase."""
 
     return {

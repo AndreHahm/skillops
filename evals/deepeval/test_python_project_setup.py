@@ -5,7 +5,8 @@ from __future__ import annotations
 import os
 
 import pytest
-from helpers import (
+
+from evals.deepeval.helpers import (
     REQUIRED_CATEGORIES,
     assert_expected_output,
     build_expected_output_checks,

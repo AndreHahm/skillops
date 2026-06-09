@@ -23,7 +23,8 @@ skillops = "skillops_cli.main:app"
 dev = [
   "pytest>=8.0",
   "ruff>=0.8",
-  "ty>=0.0.1a1"
+  "ty>=0.0.1a1",
+  "deepeval>=4.0.5"
 ]
 
 [tool.ruff]
@@ -36,6 +37,7 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = [
+  ".",
   "packages/skillops-core/src",
   "packages/skillops-cli/src"
 ]
