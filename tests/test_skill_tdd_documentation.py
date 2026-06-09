@@ -9,6 +9,7 @@ REQUIRED_DOCS = [
     ROOT / "docs" / "evaluation" / "skill-tdd.md",
     ROOT / "docs" / "evaluation" / "review-gates.md",
     ROOT / "docs" / "evaluation" / "overview.md",
+    ROOT / "docs" / "evaluation" / "ci-gate.md",
     ROOT / "docs" / "evaluation" / "golden-sets.md",
     ROOT / "docs" / "evaluation" / "promptfoo.md",
     ROOT / "docs" / "evaluation" / "deepeval.md",
@@ -38,10 +39,6 @@ FORBIDDEN_OVERCLAIMS = [
     "marketplace behavior is implemented",
     "self-improvement automation is implemented",
     "automatic skill patching is implemented",
-    "ci eval gate is implemented",
-    "ci eval gates are implemented",
-    "ci evaluation gate is implemented",
-    "ci evaluation gates are implemented",
     "promptfoo execution is mandatory",
     "deepeval live scoring is mandatory",
 ]

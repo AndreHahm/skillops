@@ -20,3 +20,13 @@ Promptfoo configs provide deterministic scenario-level assertions for local-firs
 Review gates are necessary because deterministic checks can be gamed and LLM-as-judge should not be treated as absolute truth. A reviewer must still inspect overfitting, scope creep, unsafe tool permission expansion, documentation drift, and whether the change remains useful for real agents.
 
 Future observability and future self-improvement automation must be review-gated. Production observability is planned for Phase 4 and is not implemented in Phase 2. Marketplace behavior is planned for Phase 5 and is not implemented in Phase 2. Self-improvement automation and automatic skill patching are planned for Phase 6 and are not implemented in Phase 2. Langfuse integration, Phoenix integration, production traces, dependency graph analysis, and mandatory CI evaluation gates are not active behavior in this package.
+
+## CI Smoke Gate in Skill-TDD
+
+After changing evaluation assets, use:
+
+```bash
+uv run skillops eval --smoke
+```
+
+This command provides deterministic regression protection for Golden Sets, eval suite references, Promptfoo configs, DeepEval skeletons, and documentation guardrails. It does not implement full Promptfoo or DeepEval execution, and it does not require credentials, network calls, live model calls, or `SKILLOPS_RUN_DEEPEVAL=1`.

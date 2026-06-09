@@ -52,7 +52,7 @@ tests:
   - type: not-contains
     value: DeepEval execution as current behavior
   - type: not-contains
-    value: agent-skillops
+    value: legacy repository name
   metadata:
     skill_id: documentation-maintenance
     golden_case_id: eval-docs-happy-path

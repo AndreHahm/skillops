@@ -15,7 +15,7 @@ cases:
       not_contains:
         - "Promptfoo execution as current behavior"
         - "DeepEval execution as current behavior"
-        - "agent-skillops"
+        - "legacy repository name"
       must_reference:
         - "docs/evaluation/overview.md"
         - "docs/evaluation/golden-sets.md"

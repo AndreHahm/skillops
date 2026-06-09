@@ -16,6 +16,9 @@ health:
 health-no-write:
     uv run skillops health --no-write
 
+eval-smoke:
+    uv run skillops eval --smoke
+
 list:
     uv run skillops list
 
@@ -35,4 +38,5 @@ ci:
     uv run ruff check .
     uv run pytest
     uv run skillops validate
+    uv run skillops eval --smoke
     uv run skillops health

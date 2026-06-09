@@ -12,10 +12,10 @@ Implemented now:
 - Promptfoo configuration for local deterministic smoke checks
 - DeepEval pytest skeletons and Golden Set helper utilities
 - consistency tests
+- deterministic CI smoke gate through `skillops eval --smoke`
 
 Planned for later Phase 2 packages, and not active behavior here:
 
-- mandatory CI smoke evaluation gate in a later Phase 2 package; not implemented by this package
 - richer judge-based scoring; not mandatory in this package
 - production observability in Phase 4; not implemented in Phase 2
 - dependency graph behavior; not implemented in Phase 2
@@ -26,3 +26,14 @@ The files in this directory are not runtime outputs. They are reviewed scenario 
 
 
 Skill-TDD flow: eval case first -> skill update -> local validation -> scenario eval -> review -> regression protection. See `../docs/evaluation/skill-tdd.md` and `../docs/evaluation/review-gates.md` for the contributor workflow and review checklist.
+
+
+## CI Smoke Gate
+
+Run the deterministic evaluation smoke gate locally with:
+
+```bash
+uv run skillops eval --smoke
+```
+
+The gate validates Golden Sets, `registry/eval-suites.yaml`, Promptfoo config references, DeepEval test references, documentation guardrails, and basic safety boundaries. It does not execute live model calls, Promptfoo cloud upload, DeepEval cloud login, production observability, marketplace behavior, or self-improvement automation. Production observability is planned for Phase 4, marketplace behavior is planned for Phase 5, and self-improvement automation is planned for Phase 6.

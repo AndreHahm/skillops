@@ -69,7 +69,7 @@ Promptfoo configs provide deterministic scenario-level assertions. Confirm that 
 - preserves the Golden Set category in metadata;
 - maps `expected.contains` to deterministic `contains` assertions;
 - maps `expected.not_contains` to deterministic `not-contains` assertions when applicable;
-- avoids mandatory network calls, cloud login assumptions, or CI gate claims in this package.
+- avoids mandatory network calls, cloud login assumptions, or full-evaluation claims.
 
 ## Reviewing DeepEval Tests
 
@@ -85,7 +85,7 @@ DeepEval tests provide Python/pytest-style evaluation skeletons and future metri
 
 Documentation should distinguish implemented assets from planned capabilities. Confirm that docs say:
 
-- CI smoke evaluation is planned for a later Phase 2 package and is not implemented by this package;
+- CI smoke evaluation uses `skillops eval --smoke` for deterministic evaluation asset validation;
 - production observability is planned for Phase 4 and is not implemented in Phase 2;
 - marketplace behavior is planned for Phase 5 and is not implemented in Phase 2;
 - self-improvement automation and automatic skill patching are planned for Phase 6 and are not implemented in Phase 2;
@@ -136,7 +136,7 @@ Human review is required when a change affects safety-sensitive instructions, to
 ### Documentation Accuracy
 
 - Do docs match implemented behavior?
-- Are later CI gates, production observability, marketplace behavior, and self-improvement automation marked as planned rather than implemented?
+- Are full/live evaluation, production observability, marketplace behavior, and self-improvement automation marked as planned rather than implemented?
 - Are stale names and unsupported Python version references absent?
 
 ### Regression Risk
@@ -152,3 +152,8 @@ Choose one:
 - **Approve**: evaluation assets, skill changes, validation, safety, and documentation are aligned.
 - **Request changes**: specific issues must be fixed before merge.
 - **Escalate to human owner**: safety, scope, governance, or credential risk requires human decision.
+
+
+## Evaluation CI Smoke Check
+
+Reviewers should expect CI to run `uv run skillops eval --smoke`. The step verifies Golden Set and eval suite schema alignment, Promptfoo and DeepEval references, guarded DeepEval files, and documentation/safety boundaries. It is not a live LLM evaluation, not mandatory LLM-as-judge scoring, and not a production observability signal.
