@@ -22,10 +22,10 @@ Implemented Phase 2 assets that support Skill-TDD:
 - DeepEval tests provide Python/pytest-style evaluation skeletons and future metric-oriented checks.
 - Registry references connect each core skill to its Golden Set, Promptfoo config, and DeepEval test file.
 - Repository tests check schema validity, registry consistency, documentation presence, and overclaiming boundaries.
+- The deterministic CI smoke gate runs `skillops eval --smoke` to verify evaluation asset presence, references, and structural safety without live model calls.
 
 Not implemented by this package:
 
-- CI smoke evaluation gate; planned for a later Phase 2 package.
 - Production observability; planned for Phase 4, not implemented in Phase 2.
 - Marketplace behavior; planned for Phase 5, not implemented in Phase 2.
 - Self-improvement automation and automatic skill patching; planned for Phase 6, not implemented in Phase 2.
@@ -50,8 +50,9 @@ A skill change should usually include:
 3. Updated Golden Set cases when behavior changes.
 4. Updated Promptfoo cases when deterministic scenario assertions change.
 5. Updated DeepEval tests when structured Python assertions or metric-oriented evaluation changes.
-6. Updated documentation if user-facing behavior changes.
-7. Review notes explaining why the change is safe and within scope.
+6. Run `uv run skillops eval --smoke` when evaluation assets or evaluation docs change.
+7. Updated documentation if user-facing behavior changes.
+8. Review notes explaining why the change is safe and within scope.
 
 ## Writing the Evaluation Case First
 
@@ -131,6 +132,17 @@ Skill-TDD flow:
 
 ## What Not to Do
 
-Do not use Skill-TDD work to add new runtime evaluation platforms, CI eval gates, production observability, dependency graph generation, marketplace behavior, self-improvement automation, automatic skill patching, release automation, deployment automation, or web UI behavior.
+Do not use Skill-TDD work to add new runtime evaluation platforms, full benchmark CI eval gates, production observability, dependency graph generation, marketplace behavior, self-improvement automation, automatic skill patching, release automation, deployment automation, or web UI behavior.
 
 Do not claim implemented status for Langfuse, Phoenix, production traces, marketplace promotion, automatic patching, or mandatory CI evaluation gates. Those capabilities are later-phase work unless a future package explicitly implements them.
+
+
+## Evaluation Smoke Gate in Skill-TDD
+
+Use the smoke gate as regression protection after the eval case first and skill update steps:
+
+```bash
+uv run skillops eval --smoke
+```
+
+The command checks Golden Sets, the eval suite registry, Promptfoo config references, DeepEval test references, documentation guardrails, and safety scans. It does not require real credentials, network calls, live LLM calls, Promptfoo cloud usage, DeepEval cloud login, or `SKILLOPS_RUN_DEEPEVAL=1`. A pass means the evaluation assets are structurally aligned for CI; it does not mean full benchmark evaluation or live model scoring has run.

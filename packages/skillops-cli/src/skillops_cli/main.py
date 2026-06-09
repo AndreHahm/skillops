@@ -15,6 +15,7 @@ from skillops_core import (
     generate_health_report,
     load_skill_manifest,
     load_skills_registry,
+    run_evaluation_smoke,
     validate_skill_manifest,
     validate_skills_registry,
 )
@@ -238,6 +239,47 @@ def health(
         console.print("Reports written:")
         console.print(f"- {_relative_to_repo(json_output_path, root)}")
         console.print(f"- {_relative_to_repo(markdown_output_path, root)}")
+
+
+@app.command(name="eval")
+def eval_command(
+    repo_root: RepoRootOption = Path("."),
+    smoke: Annotated[
+        bool,
+        typer.Option("--smoke", help="Run deterministic local evaluation asset smoke checks."),
+    ] = False,
+) -> None:
+    """Run SkillOps evaluation checks."""
+
+    if not smoke:
+        _print_error("Only deterministic smoke evaluation is available. Use --smoke.")
+        raise typer.Exit(1)
+
+    root = _resolve_repo_root(repo_root)
+    try:
+        result = run_evaluation_smoke(root)
+    except Exception as exc:
+        _print_error(f"Evaluation smoke check failed unexpectedly: {exc}")
+        raise typer.Exit(1) from exc
+
+    console.print("[bold]SkillOps Evaluation Smoke Check[/]")
+    console.print()
+    console.print(f"Golden sets: {result.golden_sets_checked} checked")
+    console.print(f"Eval suites: {result.eval_suites_checked} checked")
+    console.print(f"Promptfoo configs: {result.promptfoo_configs_checked} checked")
+    console.print(f"DeepEval files: {result.deepeval_files_checked} checked")
+    console.print(f"Documentation files: {result.docs_checked} checked")
+    console.print(f"Safety scan files: {result.safety_files_checked} checked")
+    console.print()
+    _render_findings(result.report.findings, title="Evaluation Smoke Findings")
+
+    if not result.passed:
+        console.print()
+        console.print("[bold red]Evaluation smoke check failed.[/]")
+        raise typer.Exit(1)
+
+    console.print()
+    console.print("[bold green]Evaluation smoke check completed.[/]")
 
 
 @app.command(name="list")

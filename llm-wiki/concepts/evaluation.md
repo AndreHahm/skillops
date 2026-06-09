@@ -18,3 +18,13 @@ Deterministic checks are useful because they are stable, reviewable, and do not 
 LLM-as-judge can be useful in later evaluation work, but it should not be treated as absolute truth. Judge results may vary by model, prompt, provider, credentials, and context; they need deterministic anchors, flake management, and human review.
 
 Future production observability is planned for Phase 4 and is not implemented in Phase 2. Future marketplace behavior is planned for Phase 5 and is not implemented in Phase 2. Future self-improvement automation and automatic skill patching are planned for Phase 6 and are not implemented in Phase 2. Langfuse integration, Phoenix integration, production traces, dependency graph analysis, and mandatory CI evaluation gates are not active behavior in this package.
+
+## Phase 2 Package 6 CI Smoke Gate
+
+Phase 2 Package 6 adds a deterministic evaluation smoke gate. The local and CI command is:
+
+```bash
+uv run skillops eval --smoke
+```
+
+The smoke gate checks Golden Sets, eval suite registry alignment, Promptfoo config references, DeepEval test references, documentation guardrails, and safety scans. It does not perform live LLM evaluation, mandatory LLM-as-judge scoring, Promptfoo cloud upload, DeepEval cloud login, Langfuse or Phoenix tracing, production observability, marketplace behavior, or self-improvement automation. Production observability is planned for Phase 4, marketplace behavior is planned for Phase 5, and self-improvement automation is planned for Phase 6.

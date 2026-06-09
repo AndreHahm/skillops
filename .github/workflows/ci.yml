@@ -35,6 +35,9 @@ jobs:
       - name: Validate SkillOps registry
         run: uv run skillops validate
 
+      - name: Evaluation smoke check
+        run: uv run skillops eval --smoke
+
       - name: Generate SkillOps health report
         run: uv run skillops health
 
