@@ -4,7 +4,7 @@
 
 SkillOps is a governance and maintenance approach for agent skill repositories. The `skillops` repository provides a control plane foundation for skills, manifests, registries, validation, health reporting, documentation, agent setup, and initial evaluation metadata.
 
-SkillOps treats agent-facing skill repositories like package ecosystems instead of loose prompt folders. Phase 1 focused on local repository structure and validation. Phase 2 now adds evaluation assets for Skill-TDD: Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, and review-gate documentation. CI evaluation gates, marketplace mechanics, production observability, dependency graph behavior, and self-improvement automation remain planned later or not implemented.
+SkillOps treats agent-facing skill repositories like package ecosystems instead of loose prompt folders. Phase 1 focused on local repository structure and validation. Phase 2 now adds evaluation assets for Skill-TDD: Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, review-gate documentation, and a deterministic CI smoke gate. Full/live evaluation, marketplace mechanics, production observability, dependency graph behavior, and self-improvement automation remain planned later or not implemented.
 
 ## Why this project exists
 
@@ -25,7 +25,7 @@ Phase 1 focuses on:
 - Claude Code and Codex agent setup files;
 - documentation and LLM-Wiki foundations.
 
-Phase 2 adds a documentation-backed Skill-TDD evaluation foundation. SkillOps uses Skill-TDD for skill changes: add or update evaluation cases first, update the skill, run validation/evaluation checks, and review for regression, scope, and safety risks. This does not implement a CI evaluation gate, production observability, dependency graph behavior, marketplace behavior, or self-improvement automation.
+Phase 2 adds a documentation-backed Skill-TDD evaluation foundation. SkillOps uses Skill-TDD for skill changes: add or update evaluation cases first, update the skill, run validation/evaluation checks, run the deterministic CI smoke gate, and review for regression, scope, and safety risks. This does not implement full/live evaluation, production observability, dependency graph behavior, marketplace behavior, or self-improvement automation.
 
 ## What is implemented now
 
@@ -40,6 +40,7 @@ The implemented foundation currently includes:
   - `health`;
   - `list`;
   - `inspect`;
+  - `eval --smoke`;
 - Claude Code and Codex setup files;
 - local hook examples and disabled MCP example configs;
 - a MkDocs-compatible `docs/` structure;
@@ -49,7 +50,8 @@ The implemented foundation currently includes:
 - local-first Promptfoo configuration under `evals/promptfoo/`, with mandatory CI Promptfoo execution not implemented;
 - guarded DeepEval skeletons under `evals/deepeval/`, with mandatory CI DeepEval live scoring not implemented;
 - the eval suite registry at `registry/eval-suites.yaml`;
-- Skill-TDD and review-gate documentation under `docs/evaluation/`.
+- the deterministic `skillops eval --smoke` command and CI smoke step for offline asset validation;
+- Skill-TDD, review-gate, and CI smoke-gate documentation under `docs/evaluation/`.
 
 ## What is intentionally not implemented yet
 
@@ -57,7 +59,7 @@ The repository does not implement these later capabilities yet:
 
 - not implemented yet: full marketplace mechanics;
 - not implemented yet: dependency graph generation;
-- not implemented yet: mandatory CI evaluation gate;
+- not implemented yet: full/live CI evaluation beyond the deterministic smoke gate;
 - not implemented yet: Promptfoo execution as a required CI gate;
 - not implemented yet: DeepEval live scoring as a required CI gate;
 - not implemented yet: Langfuse or Phoenix observability integration;
@@ -76,7 +78,7 @@ The repository does not implement these later capabilities yet:
 | `schemas` | JSON Schemas for skill manifests, registries, golden sets, and eval suites. |
 | `registry` | Canonical registry files, including `registry/skills.yaml` and `registry/eval-suites.yaml`. |
 | `skills` | Canonical core skill folders with `SKILL.md` and `skill.yaml`. |
-| `evals` | Static evaluation assets, including Golden Sets, local-first Promptfoo configuration, and guarded DeepEval skeletons; mandatory CI execution is planned later and not implemented. |
+| `evals` | Static evaluation assets, including Golden Sets, local-first Promptfoo configuration, and guarded DeepEval skeletons; full/live CI execution is planned later and not implemented. |
 | `docs` | Human-facing project documentation prepared for MkDocs. |
 | `llm-wiki` | Durable conceptual knowledge, ADRs, glossary entries, and playbooks. |
 | `hooks` | Safe local hook examples and shared hook utilities. |
@@ -96,13 +98,14 @@ uv run skillops health --no-write
 
 ## CI
 
-The Phase 1 CI workflow runs on pull requests and pushes to `main`.
+The CI workflow runs on pull requests and pushes to `main`.
 
 It checks:
 
 - Ruff
 - pytest
 - SkillOps registry validation
+- deterministic SkillOps evaluation smoke checks
 - SkillOps health report generation
 - Markdownlint when available
 
@@ -115,6 +118,7 @@ uv run skillops validate
 uv run skillops health
 uv run skillops list
 uv run skillops inspect skill-registry-maintenance
+uv run skillops eval --smoke
 ```
 
 ## Core Concepts
@@ -124,7 +128,7 @@ uv run skillops inspect skill-registry-maintenance
 - **Registry**: the canonical machine-readable index of known skills, currently `registry/skills.yaml`.
 - **Health report**: a generated summary of Phase 1 validation and hygiene findings.
 - **Golden set**: canonical scenario assets used as behavioral regression protection in Skill-TDD.
-- **Eval suite registry**: suite metadata that maps core skills to Golden Sets, Promptfoo configs, and DeepEval skeletons; mandatory CI evaluation gate behavior is not implemented.
+- **Eval suite registry**: suite metadata that maps core skills to Golden Sets, Promptfoo configs, and DeepEval skeletons; full/live CI evaluation behavior is not implemented beyond the deterministic smoke gate.
 - **Skill-TDD**: eval case first, then skill update, local validation, scenario eval, review, and regression protection.
 - **Agent setup**: repository files that orient Claude Code, Codex, hooks, and MCP examples.
 - **LLM-Wiki**: durable conceptual knowledge for agents and maintainers, separate from task logs or temporary notes.
@@ -161,7 +165,7 @@ Start with `docs/index.md` for project documentation and `llm-wiki/index.md` for
 
 ## Roadmap
 
-Phase 1 Foundation establishes the repository, schemas, registry, core library, CLI MVP, core skills, agent setup, docs, and LLM-Wiki. Phase 2 establishes evaluation schemas, Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, and Skill-TDD review documentation. Later phases may add mandatory CI smoke evaluation, codebase research support, dependency graph generation, Phase 4 production observability integrations, Phase 5 marketplace mechanics, Phase 6 self-improvement automation, and CI or release finalization.
+Phase 1 Foundation establishes the repository, schemas, registry, core library, CLI MVP, core skills, agent setup, docs, and LLM-Wiki. Phase 2 establishes evaluation schemas, Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, Skill-TDD review documentation, and a deterministic CI smoke gate. Later phases may add codebase research support, dependency graph generation, Phase 4 production observability integrations, Phase 5 marketplace mechanics, Phase 6 self-improvement automation, and CI or release finalization.
 
 Future roadmap items are planned extension areas, not current implemented behavior.
 

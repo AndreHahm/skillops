@@ -130,6 +130,9 @@ def test_eval_smoke_fails_on_missing_required_reference(tmp_path: Path) -> None:
 def test_ci_references_evaluation_smoke_and_phase_1_validation() -> None:
     text = _workflow_text()
 
+    assert "SkillOps CI" in text
+    stale_ci_name = "Phase " + "1 CI"
+    assert stale_ci_name not in text
     assert "Evaluation smoke check" in text
     assert SMOKE_COMMAND in text
     assert "uv run skillops validate" in text

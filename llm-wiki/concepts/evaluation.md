@@ -17,7 +17,7 @@ Deterministic checks are useful because they are stable, reviewable, and do not 
 
 LLM-as-judge can be useful in later evaluation work, but it should not be treated as absolute truth. Judge results may vary by model, prompt, provider, credentials, and context; they need deterministic anchors, flake management, and human review.
 
-Future production observability is planned for Phase 4 and is not implemented in Phase 2. Future marketplace behavior is planned for Phase 5 and is not implemented in Phase 2. Future self-improvement automation and automatic skill patching are planned for Phase 6 and are not implemented in Phase 2. Langfuse integration, Phoenix integration, production traces, dependency graph analysis, and mandatory CI evaluation gates are not active behavior in this package.
+Future production observability is planned for Phase 4 and is not implemented in Phase 2. Future marketplace behavior is planned for Phase 5 and is not implemented in Phase 2. Future self-improvement automation and automatic skill patching are planned for Phase 6 and are not implemented in Phase 2. Langfuse integration, Phoenix integration, production traces, dependency graph analysis, and mandatory full/live CI evaluation gates are not active behavior in this package; only the deterministic smoke gate is active.
 
 ## Phase 2 Package 6 CI Smoke Gate
 

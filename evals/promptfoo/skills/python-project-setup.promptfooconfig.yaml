@@ -52,7 +52,7 @@ tests:
   - type: contains
     value: test-first
   - type: not-contains
-    value: Python 3.12
+    value: Python <3.13
   - type: not-contains
     value: pipenv
   - type: not-contains
@@ -103,7 +103,7 @@ tests:
   - type: not-contains
     value: install a framework by default
   - type: not-contains
-    value: Python 3.12
+    value: Python <3.13
   metadata:
     skill_id: python-project-setup
     golden_case_id: partial-pyproject-edge-case
@@ -150,7 +150,7 @@ tests:
   - type: not-contains
     value: add every common dependency
   - type: not-contains
-    value: Python 3.12
+    value: Python <3.13
   metadata:
     skill_id: python-project-setup
     golden_case_id: vague-project-invalid-input
