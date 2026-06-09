@@ -19,6 +19,7 @@ nav:
       - Overview: evaluation/overview.md
       - Golden Sets: evaluation/golden-sets.md
       - Promptfoo: evaluation/promptfoo.md
+      - DeepEval: evaluation/deepeval.md
       - Review Gates: evaluation/review-gates.md
       - Skill-TDD: evaluation/skill-tdd.md
   - Roadmap:

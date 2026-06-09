@@ -1,18 +1,27 @@
 # Skill-TDD
 
-Skill-TDD is the planned practice of designing representative skill behavior scenarios before changing a skill. Phase 2 now provides Golden Sets plus local-first Promptfoo configuration for deterministic smoke checks.
+Skill-TDD is the practice of designing representative skill behavior scenarios before changing a skill. Phase 2 currently provides Golden Sets, local-first Promptfoo configuration, and guarded DeepEval skeletons.
 
 Implemented now:
 
-- golden sets for the five Phase 1 core skills
-- schemas that make golden sets and eval suites reviewable
+- Golden Sets for the five Phase 1 core skills
+- schemas that make Golden Sets and eval suites reviewable
 - Promptfoo configs that map Golden Set expectations to deterministic assertions
-- tests that check consistency between skill IDs, golden set files, Promptfoo configs, and eval suite entries
+- DeepEval pytest skeletons that load Golden Sets and run deterministic local checks
+- tests that check consistency between skill IDs, Golden Set files, Promptfoo configs, DeepEval files, and eval suite entries
 
-Planned later, and not implemented here:
+How to use these assets during skill work:
 
-- DeepEval execution
-- mandatory CI smoke evaluation gate
-- richer judge-based pass/fail reporting for skill behavior
+1. Review or update the relevant Golden Set first.
+2. Keep categories such as `happy_path`, `edge_case`, `invalid_input`, `scope_creep`, and `safety_sensitive` explicit.
+3. Keep Promptfoo configs aligned with deterministic Golden Set assertions.
+4. Keep DeepEval skeletons aligned with the Golden Set path and skill ID.
+5. Run `uv run pytest` and `uv run skillops validate` before reporting completion.
 
-Reviewers should treat Golden Sets as canonical acceptance scenarios and Promptfoo configs as local smoke assets, not as proof of production behavior.
+Optional local DeepEval construction checks can be run with:
+
+```bash
+SKILLOPS_RUN_DEEPEVAL=1 uv run pytest evals/deepeval
+```
+
+LLM-as-judge scoring, mandatory CI evaluation gates, and richer automated Skill-TDD reporting are planned later. Reviewers should treat Golden Sets as canonical acceptance scenarios, Promptfoo configs as local smoke assets, and DeepEval files as guarded Python skeletons rather than proof of production behavior.
