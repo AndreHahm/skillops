@@ -132,7 +132,8 @@ def test_eval_suites_reference_existing_golden_sets_and_registered_skills() -> N
 def test_eval_suites_do_not_reference_missing_promptfoo_or_deepeval_files() -> None:
     for suite in _eval_suite_registry()["eval_suites"]:
         promptfoo_config = suite["promptfoo_config"]
-        assert promptfoo_config is None
+        assert isinstance(promptfoo_config, str)
+        assert (ROOT / promptfoo_config).is_file()
         for deepeval_path in suite["deepeval_tests"]:
             assert (ROOT / deepeval_path).is_file()
         assert suite["deepeval_tests"] == []
@@ -160,7 +161,7 @@ def test_evaluation_docs_do_not_claim_future_execution_or_observability() -> Non
 def test_no_future_runtime_behavior_files_were_added() -> None:
     assert sorted(
         p.name for p in (ROOT / "evals" / "promptfoo").iterdir() if not p.name.startswith(".")
-    ) == ["README.md"]
+    ) == ["README.md", "promptfooconfig.yaml", "skills"]
     assert sorted(
         p.name for p in (ROOT / "evals" / "deepeval").iterdir() if not p.name.startswith(".")
     ) == ["README.md"]

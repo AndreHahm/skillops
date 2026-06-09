@@ -2,35 +2,35 @@ version: 1
 eval_suites:
   - id: eval-python-project-setup
     skill_id: python-project-setup
-    status: planned
+    status: draft
     golden_set: evals/golden/python-project-setup.yaml
-    promptfoo_config: null
+    promptfoo_config: evals/promptfoo/skills/python-project-setup.promptfooconfig.yaml
     deepeval_tests: []
 
   - id: eval-skill-manifest-authoring
     skill_id: skill-manifest-authoring
-    status: planned
+    status: draft
     golden_set: evals/golden/skill-manifest-authoring.yaml
-    promptfoo_config: null
+    promptfoo_config: evals/promptfoo/skills/skill-manifest-authoring.promptfooconfig.yaml
     deepeval_tests: []
 
   - id: eval-skill-registry-maintenance
     skill_id: skill-registry-maintenance
-    status: planned
+    status: draft
     golden_set: evals/golden/skill-registry-maintenance.yaml
-    promptfoo_config: null
+    promptfoo_config: evals/promptfoo/skills/skill-registry-maintenance.promptfooconfig.yaml
     deepeval_tests: []
 
   - id: eval-skill-health-review
     skill_id: skill-health-review
-    status: planned
+    status: draft
     golden_set: evals/golden/skill-health-review.yaml
-    promptfoo_config: null
+    promptfoo_config: evals/promptfoo/skills/skill-health-review.promptfooconfig.yaml
     deepeval_tests: []
 
   - id: eval-documentation-maintenance
     skill_id: documentation-maintenance
-    status: planned
+    status: draft
     golden_set: evals/golden/documentation-maintenance.yaml
-    promptfoo_config: null
+    promptfoo_config: evals/promptfoo/skills/documentation-maintenance.promptfooconfig.yaml
     deepeval_tests: []
