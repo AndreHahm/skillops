@@ -1,0 +1,46 @@
+id: codebase-research
+name: Codebase Research
+version: 0.1.0
+status: draft
+risk_tier: low
+description: >
+  Guides coding agents through structured codebase research before planning or implementing changes.
+
+owner:
+  name: platform
+  contact: platform@example.com
+
+type:
+  category: governance
+  execution: instruction-only
+
+compatibility:
+  agents:
+    - claude-code
+    - codex
+  environments:
+    - ubuntu-24.04
+    - windows-11-wsl2
+
+dependencies:
+  skills:
+    - documentation-maintenance
+    - skill-manifest-authoring
+    - skill-registry-maintenance
+  tools: []
+  mcp_servers: []
+
+allowed_tools:
+  shell: read-only
+  filesystem: read-write
+
+evals:
+  suite_id: null
+  status: not-configured
+
+provenance:
+  source: internal
+  license: MIT
+
+paths:
+  skill_file: SKILL.md

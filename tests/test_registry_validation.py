@@ -14,6 +14,7 @@ EXPECTED_CORE_SKILL_IDS = {
     "skill-registry-maintenance",
     "skill-health-review",
     "documentation-maintenance",
+    "codebase-research",
 }
 
 
@@ -43,9 +44,9 @@ def test_skills_registry_validates_against_json_schema() -> None:
     validator.validate(_registry())
 
 
-def test_registry_references_exactly_five_core_skills() -> None:
+def test_registry_references_expected_registered_skills() -> None:
     entries = _registry()["skills"]
-    assert len(entries) == 5
+    assert len(entries) == len(EXPECTED_CORE_SKILL_IDS)
     assert {entry["id"] for entry in entries} == EXPECTED_CORE_SKILL_IDS
 
 

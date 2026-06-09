@@ -55,11 +55,11 @@ def test_missing_eval_suite_is_warning_and_does_not_earn_eval_points(tmp_path: P
     assert health.score == 70
 
 
-def test_generate_health_report_returns_five_skills_for_current_repository() -> None:
+def test_generate_health_report_returns_registered_skills_for_current_repository() -> None:
     report = generate_health_report(ROOT)
 
-    assert report.total_skills == 5
-    assert len(report.skills) == 5
+    assert report.total_skills == 6
+    assert len(report.skills) == 6
 
 
 def test_write_health_report_json_writes_valid_json(tmp_path: Path) -> None:
@@ -69,7 +69,7 @@ def test_write_health_report_json_writes_valid_json(tmp_path: Path) -> None:
     write_health_report_json(report, path)
 
     data = json.loads(path.read_text(encoding="utf-8"))
-    assert data["total_skills"] == 5
+    assert data["total_skills"] == 6
     assert "average_health_score" in data
 
 

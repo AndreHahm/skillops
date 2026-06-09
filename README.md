@@ -4,7 +4,7 @@
 
 SkillOps is a governance and maintenance approach for agent skill repositories. The `skillops` repository provides a control plane foundation for skills, manifests, registries, validation, health reporting, documentation, agent setup, and initial evaluation metadata.
 
-SkillOps treats agent-facing skill repositories like package ecosystems instead of loose prompt folders. Phase 1 focused on local repository structure and validation. Phase 2 now adds evaluation assets for Skill-TDD: Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, review-gate documentation, and a deterministic CI smoke gate. Full/live evaluation, marketplace mechanics, production observability, dependency graph behavior, and self-improvement automation remain planned later or not implemented.
+SkillOps treats agent-facing skill repositories like package ecosystems instead of loose prompt folders. Phase 1 focused on local repository structure and validation. Phase 2 adds evaluation assets for Skill-TDD: Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, review-gate documentation, and a deterministic CI smoke gate. Phase 2a has started with a codebase research skill and minimal report location. Full/live evaluation, marketplace mechanics, production observability, dependency graph behavior, external research tool integrations, and self-improvement automation remain planned later or not implemented.
 
 ## Why this project exists
 
@@ -33,7 +33,7 @@ The implemented foundation currently includes:
 
 - the `skill.yaml` JSON Schema in `schemas/skill.schema.json`;
 - the canonical skill registry at `registry/skills.yaml`;
-- five core skill folders under `skills/`;
+- five Phase 1 core skill folders plus the Phase 2a `codebase-research` skill under `skills/`;
 - the reusable `skillops-core` package for loading, validation, structured models, and health scoring;
 - the `skillops` CLI commands:
   - `validate`;
@@ -59,6 +59,7 @@ The repository does not implement these later capabilities yet:
 
 - not implemented yet: full marketplace mechanics;
 - not implemented yet: dependency graph generation;
+- not implemented yet: Serena, Repomix, graphify, or code-review-graph integrations;
 - not implemented yet: full/live CI evaluation beyond the deterministic smoke gate;
 - not implemented yet: Promptfoo execution as a required CI gate;
 - not implemented yet: DeepEval live scoring as a required CI gate;
@@ -77,7 +78,7 @@ The repository does not implement these later capabilities yet:
 | `packages/skillops-cli` | Typer-based `skillops` command-line interface. |
 | `schemas` | JSON Schemas for skill manifests, registries, golden sets, and eval suites. |
 | `registry` | Canonical registry files, including `registry/skills.yaml` and `registry/eval-suites.yaml`. |
-| `skills` | Canonical core skill folders with `SKILL.md` and `skill.yaml`. |
+| `skills` | Canonical skill folders with `SKILL.md` and `skill.yaml`. |
 | `evals` | Static evaluation assets, including Golden Sets, local-first Promptfoo configuration, and guarded DeepEval skeletons; full/live CI execution is planned later and not implemented. |
 | `docs` | Human-facing project documentation prepared for MkDocs. |
 | `llm-wiki` | Durable conceptual knowledge, ADRs, glossary entries, and playbooks. |
@@ -143,6 +144,8 @@ The Phase 1 core skills are:
 - `skill-health-review`;
 - `documentation-maintenance`.
 
+Phase 2a adds `codebase-research` as a draft skill for structured repository research before non-trivial implementation work. Implemented now: the codebase research skill and minimal report location. Planned later: Serena docs, Repomix config, graphify adapter docs, code-review-graph docs, and research tests expansion.
+
 ## Agent Setup
 
 Agent-facing setup includes:
@@ -165,7 +168,7 @@ Start with `docs/index.md` for project documentation and `llm-wiki/index.md` for
 
 ## Roadmap
 
-Phase 1 Foundation establishes the repository, schemas, registry, core library, CLI MVP, core skills, agent setup, docs, and LLM-Wiki. Phase 2 establishes evaluation schemas, Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, Skill-TDD review documentation, and a deterministic CI smoke gate. Later phases may add codebase research support, dependency graph generation, Phase 4 production observability integrations, Phase 5 marketplace mechanics, Phase 6 self-improvement automation, and CI or release finalization.
+Phase 1 Foundation establishes the repository, schemas, registry, core library, CLI MVP, core skills, agent setup, docs, and LLM-Wiki. Phase 2 establishes evaluation schemas, Golden Sets, local-first Promptfoo configuration, guarded DeepEval skeletons, Skill-TDD review documentation, and a deterministic CI smoke gate. Phase 2a starts codebase research support with a draft skill and minimal report location only. Later phases may add external research tool documentation or adapters, dependency graph generation, Phase 4 production observability integrations, Phase 5 marketplace mechanics, Phase 6 self-improvement automation, and CI or release finalization.
 
 Future roadmap items are planned extension areas, not current implemented behavior.
 

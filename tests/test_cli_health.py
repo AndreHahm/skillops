@@ -43,5 +43,5 @@ def test_health_writes_json_and_markdown_reports(tmp_path: Path) -> None:
     assert "Total Skills" in result.output
     assert "Average Health Score" in result.output
     data = json.loads(json_path.read_text(encoding="utf-8"))
-    assert data["total_skills"] == 5
+    assert data["total_skills"] == 6
     assert "# Skill Health Report" in markdown_path.read_text(encoding="utf-8")

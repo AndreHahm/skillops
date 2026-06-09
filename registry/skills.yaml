@@ -14,3 +14,7 @@ skills:
 
   - id: documentation-maintenance
     path: skills/documentation-maintenance/skill.yaml
+
+  - id: codebase-research
+    path: skills/codebase-research/skill.yaml
+
