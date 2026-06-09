@@ -155,11 +155,13 @@ def test_registry_references_all_deepeval_tests_and_preserves_promptfoo_configs(
             f"evals/promptfoo/skills/{skill_id}.promptfooconfig.yaml"
         )
         assert (ROOT / suite["promptfoo_config"]).is_file()
-        assert suite["deepeval_tests"] == [str(CORE_DEEPEVAL_TESTS[skill_id].relative_to(ROOT))]
+        relpath = CORE_DEEPEVAL_TESTS[skill_id].relative_to(ROOT).as_posix()
+        assert suite["deepeval_tests"] == [relpath]
         for deepeval_path in suite["deepeval_tests"]:
             referenced.add(deepeval_path)
             assert (ROOT / deepeval_path).is_file()
-    assert referenced == {str(path.relative_to(ROOT)) for path in CORE_DEEPEVAL_TESTS.values()}
+    assert referenced == {path.relative_to(ROOT).as_posix() for path in
+                          CORE_DEEPEVAL_TESTS.values()}
 
 
 def test_deepeval_docs_exist_and_explain_guarded_local_usage() -> None:

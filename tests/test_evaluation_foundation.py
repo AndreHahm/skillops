@@ -169,6 +169,7 @@ def test_no_future_runtime_behavior_files_were_added() -> None:
         if not p.name.startswith(".") and p.name != "__pycache__"
     ) == [
         "README.md",
+        "__init__.py",
         "conftest.py",
         "helpers.py",
         "test_documentation_maintenance.py",
