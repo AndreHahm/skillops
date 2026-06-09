@@ -134,9 +134,11 @@ def test_eval_suites_do_not_reference_missing_promptfoo_or_deepeval_files() -> N
         promptfoo_config = suite["promptfoo_config"]
         assert isinstance(promptfoo_config, str)
         assert (ROOT / promptfoo_config).is_file()
+        assert suite["deepeval_tests"] == [
+            f"evals/deepeval/test_{suite['skill_id'].replace('-', '_')}.py"
+        ]
         for deepeval_path in suite["deepeval_tests"]:
             assert (ROOT / deepeval_path).is_file()
-        assert suite["deepeval_tests"] == []
         assert suite["status"] in {"planned", "draft"}
 
 
@@ -145,7 +147,6 @@ def test_evaluation_docs_do_not_claim_future_execution_or_observability() -> Non
         "skillops now evaluates skills with promptfoo",
         "skillops now evaluates skills with deepeval",
         "promptfoo execution is implemented",
-        "deepeval execution is implemented",
         "production observability is implemented",
         "marketplace behavior is implemented",
         "dependency graph behavior is implemented",
@@ -163,8 +164,20 @@ def test_no_future_runtime_behavior_files_were_added() -> None:
         p.name for p in (ROOT / "evals" / "promptfoo").iterdir() if not p.name.startswith(".")
     ) == ["README.md", "promptfooconfig.yaml", "skills"]
     assert sorted(
-        p.name for p in (ROOT / "evals" / "deepeval").iterdir() if not p.name.startswith(".")
-    ) == ["README.md"]
+        p.name
+        for p in (ROOT / "evals" / "deepeval").iterdir()
+        if not p.name.startswith(".") and p.name != "__pycache__"
+    ) == [
+        "README.md",
+        "__init__.py",
+        "conftest.py",
+        "helpers.py",
+        "test_documentation_maintenance.py",
+        "test_python_project_setup.py",
+        "test_skill_health_review.py",
+        "test_skill_manifest_authoring.py",
+        "test_skill_registry_maintenance.py",
+    ]
     assert not (ROOT / "packages" / "skillops-cli" / "src" / "skillops_cli" / "eval.py").exists()
     assert not (ROOT / "registry" / "marketplace.yaml").exists()
     assert not (ROOT / "registry" / "dependency-graph.yaml").exists()

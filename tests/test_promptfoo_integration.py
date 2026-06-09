@@ -119,15 +119,17 @@ def test_promptfoo_assertions_are_deterministic_and_derived_from_golden_sets() -
             assert _assertions(test, "not-contains") == expected_not_contains
 
 
-def test_registry_references_existing_promptfoo_configs_and_no_deepeval_files() -> None:
+def test_registry_references_existing_promptfoo_configs_and_deepeval_files() -> None:
     registry = _load_yaml(ROOT / "registry" / "eval-suites.yaml")
     for suite in registry["eval_suites"]:
+        skill_id = suite["skill_id"]
         assert suite["status"] == "draft"
-        assert suite["deepeval_tests"] == []
+        assert suite["deepeval_tests"] == [
+            f"evals/deepeval/test_{skill_id.replace('-', '_')}.py"
+        ]
+        assert (ROOT / suite["deepeval_tests"][0]).is_file()
         promptfoo_config = suite["promptfoo_config"]
-        assert promptfoo_config == (
-            f"evals/promptfoo/skills/{suite['skill_id']}.promptfooconfig.yaml"
-        )
+        assert promptfoo_config == f"evals/promptfoo/skills/{skill_id}.promptfooconfig.yaml"
         assert (ROOT / promptfoo_config).is_file()
 
 
@@ -155,7 +157,6 @@ def test_promptfoo_configs_and_docs_do_not_commit_secrets_or_local_paths() -> No
 
 def test_promptfoo_documentation_does_not_overclaim_future_behavior() -> None:
     prohibited_claims = [
-        "deepeval execution is implemented",
         "production observability is implemented",
         "marketplace behavior is implemented",
         "self-improvement automation is implemented",

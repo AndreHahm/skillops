@@ -12,7 +12,6 @@ SkillOps uses Promptfoo in Phase 2 Package 3 as a local-first configuration and 
 
 ## Planned Later
 
-- DeepEval integration
 - CI evaluation gate
 - Richer judge-based scoring
 - Production observability
@@ -65,4 +64,4 @@ Avoid brittle full-output matching. Prefer short, deterministic phrases, command
 
 ## Boundaries
 
-This package does not implement DeepEval execution, production observability, marketplace behavior, dependency graph behavior, release automation, deployment automation, self-improvement automation, or a full `skillops eval` platform. Red-team seed files may inform later work, but this package does not add Promptfoo red-team execution.
+This Promptfoo package does not implement DeepEval runtime scoring, production observability, marketplace behavior, dependency graph behavior, release automation, deployment automation, self-improvement automation, or a full `skillops eval` platform. Red-team seed files may inform later work, but this package does not add Promptfoo red-team execution.

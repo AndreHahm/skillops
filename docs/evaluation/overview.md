@@ -1,8 +1,8 @@
 # Evaluation Foundation Overview
 
-SkillOps Phase 2 establishes the evaluation foundation for skills. The current foundation makes skill behavior reviewable through schemas, expanded Golden Sets, an eval suite registry, and local-first Promptfoo configuration files.
+SkillOps Phase 2 establishes structured evaluation assets for skills. The current foundation makes skill behavior reviewable through schemas, expanded Golden Sets, an eval suite registry, local-first Promptfoo configuration files, and guarded DeepEval pytest skeletons.
 
-Implemented in this package:
+Implemented now:
 
 - evaluation directory structure under `evals/`
 - `schemas/golden-set.schema.json`
@@ -10,13 +10,19 @@ Implemented in this package:
 - `schemas/eval-suite.schema.json`
 - `registry/eval-suites.yaml`
 - Promptfoo configuration files for local deterministic smoke checks
-- deterministic consistency tests for schemas, Golden Set completeness, required categories, Promptfoo config references, safety drift, and documentation claims
+- DeepEval test skeletons and helper utilities for local pytest-style checks
+- deterministic consistency tests for schemas, Golden Set completeness, required categories, Promptfoo config references, DeepEval references, safety drift, and documentation claims
 
-Planned for later Phase 2 packages, and not implemented here:
+Implemented earlier:
 
-- DeepEval tests and execution
-- mandatory CI smoke evaluation gate
+- Golden Sets
+- Promptfoo configuration
+
+Planned later, and not active behavior here:
+
+- mandatory CI evaluation gate
 - richer Promptfoo and DeepEval-backed Skill-TDD reporting
-- production observability, dependency graph behavior, marketplace behavior, release automation, deployment automation, and self-improvement automation
+- LLM-as-judge scoring that is explicitly credentialed and flake-managed
+- production observability, Langfuse/Phoenix tracing, dependency graph behavior, marketplace behavior, release automation, deployment automation, and self-improvement candidate generation
 
-The strategic shift is from file-only validity toward behavior-aware validation. This package prepares the contracts for that shift and adds Promptfoo configs that can be run locally when Promptfoo is installed, while repository tests remain structural and offline.
+The strategic shift is from file-only validity toward behavior-aware validation. Golden Sets remain the canonical scenario source. Promptfoo provides declarative smoke/regression configuration, while DeepEval provides Python and pytest-style skeletons that can later receive captured system outputs. Repository tests remain structural and offline by default.
